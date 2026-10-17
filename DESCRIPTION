@@ -23,3 +23,5 @@ Suggests:
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Config/testthat/parallel: true
+Config/testthat/start-first: recovery-glmm, recovery-glmm-trial-sd, recovery

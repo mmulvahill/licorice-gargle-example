@@ -133,3 +133,12 @@ found nothing that changes a conclusion.
 
 The summary (`index.qmd`) is written from computed results, with the open
 client questions listed.
+
+**2026-10-17** Sped up the simulation-recovery tests from about two minutes
+to under one, at the analyst's request. The recovery tests are now split
+across three files that run in parallel (testthat's parallel mode, slowest
+first); almost all the time is the mixed model's adaptive quadrature. The two
+checks at the trial's own clustering (SD 2.75) now use 100 simulated trials
+instead of 200: they are a robustness check on top of the main recovery
+tests. Every test still passes, and switching the mixed model back to
+Laplace still fails both mixed-model recovery files. No analysis changed.

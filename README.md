@@ -31,7 +31,7 @@ The plan was locked with the `plan-v1` tag before the data arrived.
 
 You need R (4.1 or later), [Quarto](https://quarto.org/docs/get-started/)
 and the packages in `DESCRIPTION`. Then `make all` (or `Rscript run_all.R`)
-and open `_book/index.html`. The recovery tests take a couple of minutes.
+and open `_book/index.html`. The recovery tests take about a minute.
 
 ## Starting your own project
 
