@@ -135,6 +135,12 @@ random-intercept distribution (D-017).
 
 The risk-difference Wald CI gets a known-answer test (D-017).
 
+*Added after the plan was locked at `plan-v1`, before any data were seen
+(D-018):* the recovery test for the common odds ratio, from both the GEE
+and the mixed model, simulates a treatment effect that is constant over
+time, since only then does the common odds ratio have a single true value.
+The best- and worst-case bounds procedure gets a known-answer test.
+
 ## Reporting
 
 Effect sizes with 95% CI; p-values to three decimals. There is no

@@ -300,3 +300,21 @@ typed; the report chapters compute theirs.
 - **Timing:** At planning, after plan review, before any data were seen.
 - **Alternatives:** Newcombe intervals for the risk difference, suggested
   in the review for proportions near 0 or 1.
+
+## D-018: Constant-effect simulation for the common OR; test the bounds
+
+- **Date:** 2026-10-16
+- **Decided by:** Matt Mulvahill (analyst)
+- **Decision:** Adds to D-017. The recovery test for the common odds ratio
+  (GEE and mixed model) simulates a treatment effect that is constant over
+  time. The best- and worst-case bounds procedure gets a known-answer test.
+- **Why:** The common odds ratio assumes one common effect (D-014); only
+  with a constant simulated effect does it have a single true value to
+  recover. The bounds are analysis logic and need a test like any other
+  (CLAUDE.md rule 3). Both were raised in the plan review.
+- **Timing:** After the plan was locked at `plan-v1`, before any data
+  were seen. Not post hoc: no outcome or other data value had been
+  examined. Changes verification only; no estimand, outcome or model
+  changes.
+- **Alternatives:** Simulating a time-varying effect and checking the
+  weighted-average target; no dedicated test for the bounds.
