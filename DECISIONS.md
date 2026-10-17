@@ -347,7 +347,7 @@ typed; the report chapters compute theirs.
 
 ## D-020: Mixed model fitted by adaptive quadrature (9 points)
 
-- **Date:** 2026-10-16
+- **Date:** 2026-10-17 (proposed 2026-10-16)
 - **Decided by:** Matt Mulvahill (analyst), confirming Claude's proposal
   on 2026-10-17, before any model was fitted to the trial data.
 - **Decision:** The random-intercept mixed model (D-008) is
@@ -366,3 +366,26 @@ typed; the report chapters compute theirs.
   seen. Not post hoc. Changes the fitting method only, not the plan.
 - **Alternatives:** Laplace (the `lme4` default); more quadrature points;
   a different package (`GLMMadaptive`).
+
+## D-021: Extend the worst-case bound to enrolled patients absent from the file
+
+- **Date:** 2026-10-17
+- **Decided by:** Matt Mulvahill (analyst), after the analysis review.
+- **Decision:** Adds to D-010. A further worst-case bound for the primary
+  odds ratio. Every enrolled patient missing from the delivered file (the
+  codebook's enrollment count minus the rows in the file) is added to the
+  licorice arm with a sore throat, on top of the in-file worst case. The
+  existing best- and worst-case bounds are unchanged. The report now says
+  that they cover only the patients in the file.
+- **Why:** The analysis review noted that "patients missing the primary
+  outcome cannot change this conclusion" covered only the patients with no
+  post-operative data in the file. The patient the codebook counts as
+  enrolled but the file lacks was not covered. Whether that patient was
+  randomized is an open question for the client (Chapter 1).
+- **Timing:** **Post hoc.** Added after all results had been seen,
+  including the primary estimate and the in-file bounds. It adds a
+  supplementary analysis. It does not change the primary outcome, the
+  primary model or any estimand.
+- **Alternatives:** Rewording only, with no extended bound (the review's
+  minimum); an extended best case as well; placing the absent patient in
+  the sugar-water arm, which is less extreme for licorice.

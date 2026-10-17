@@ -43,13 +43,107 @@ knitr::kable(lineage, col.names = c("Step", "Rows", "File"))
 #| eval: !expr has_data
 n_arm <- results$n_by_arm
 miss <- results$missing
+n_absent <- results$n_enrolled - results$n_patients
+# Each data-dependent sentence is built here, with a branch for each way
+# the data could fall, so the prose cannot outlive the numbers.
+s_patients <- sprintf(
+  "The file has %d patients: %d randomized to sugar water and %d to licorice.",
+  results$n_patients, n_arm[["Sugar water"]], n_arm[["Licorice"]]
+)
+s_enrolled <- if (n_absent > 0) {
+  sprintf(
+    paste(
+      "The codebook gives an enrollment count of %d, so %d enrolled %s not in the file.",
+      "Why is an open question for the client (Chapter 1). If a randomized patient",
+      "is missing, the analysis is not fully intention to treat."
+    ),
+    results$n_enrolled, n_absent, if (n_absent == 1) "patient is" else "patients are"
+  )
+} else {
+  sprintf("The file holds every one of the %d patients the codebook counts as enrolled.",
+          results$n_enrolled)
+}
+missing_by_patient <- miss$missing_sugar + miss$missing_licorice
+s_missing <- if (all(missing_by_patient == results$no_postop_n)) {
+  sprintf(
+    paste(
+      "Missing outcomes come entirely from %d patients (%d on sugar water, %d on",
+      "licorice) who have no post-operative data at all; every other patient has all",
+      "four scores."
+    ),
+    results$no_postop_n, miss$missing_sugar[1], miss$missing_licorice[1]
+  )
+} else {
+  sprintf(
+    paste(
+      "%d patients have no post-operative data at all; other patients are missing",
+      "some assessments but not others (see the table)."
+    ),
+    results$no_postop_n
+  )
+}
+s_trigger <- if (max(miss$prop_missing) <= 0.05) {
+  sprintf(
+    paste(
+      "At most %s of patients are missing any one assessment. That is within the",
+      "plan's five-percent trigger for revisiting the missing-data approach (D-015),",
+      "so the complete-case analyses stand."
+    ),
+    fmt_pct(max(miss$prop_missing), 1)
+  )
+} else {
+  sprintf(
+    paste(
+      "Up to %s of patients are missing an assessment, above the plan's five-percent",
+      "trigger: the missing-data approach must be revisited before these results are",
+      "used (D-015)."
+    ),
+    fmt_pct(max(miss$prop_missing), 1)
+  )
+}
+b <- results$bounds
+ab <- results$absent_bound
+s_bounds <- sprintf(
+  paste(
+    "Among the patients in the file, the best case for licorice gives %s and the",
+    "worst case %s. The complete-case estimate (Chapter 6) is %s."
+  ),
+  fmt_or(b[1, ]), fmt_or(b[2, ]), fmt_or(results$primary)
+)
+s_bounds_verdict <- if (all(b$upper < 1)) {
+  paste(
+    "Both bounds keep the confidence interval below one, so the missing outcomes of",
+    "patients in the file cannot change the primary conclusion."
+  )
+} else {
+  paste(
+    "At least one bound has a confidence interval that includes one, so the missing",
+    "outcomes of patients in the file could change the primary conclusion."
+  )
+}
+s_absent <- if (ab$n_absent > 0) {
+  sprintf(
+    paste(
+      "These bounds do not cover the %d enrolled %s absent from the file. *Added after",
+      "results were seen (post hoc; D-021):* adding %s to the licorice arm with a sore",
+      "throat, on top of the in-file worst case, gives %s. %s"
+    ),
+    ab$n_absent, if (ab$n_absent == 1) "patient" else "patients",
+    if (ab$n_absent == 1) "that patient" else "those patients",
+    fmt_or(ab),
+    if (ab$upper < 1) {
+      "The confidence interval stays below one, so the primary conclusion holds even then."
+    } else {
+      "The confidence interval then includes one, so the absent patients could matter."
+    }
+  )
+} else {
+  "No enrolled patient is absent from the file, so the bounds cover every enrolled patient."
+}
 ```
 
-`r if (has_data) sprintf("The file has %d patients: %d randomized to sugar water and %d to licorice.", results$n_patients, n_arm[["Sugar water"]], n_arm[["Licorice"]]) else ""`
-The codebook gives a higher enrollment count than the number of rows in the
-file. Why some enrolled patients are absent is an open question for the
-client (Chapter 1). If a randomized patient is missing, the analysis is
-not fully intention to treat.
+`r if (has_data) s_patients else ""`
+`r if (has_data) s_enrolled else ""`
 
 ## Missing data
 
@@ -71,41 +165,46 @@ knitr::kable(
 )
 ```
 
-`r if (has_data) sprintf("Missing outcomes come entirely from %d patients (%d in each arm) who have no post-operative data at all; every other patient has all four scores.", results$no_postop_n, miss$missing_sugar[1]) else ""`
-The intake notes anticipated this ("a couple pts no post-op data"), and
-why those patients have no post-operative data is an open question in
+`r if (has_data) s_missing else ""`
+The intake notes anticipated patients with no post-operative data ("a
+couple pts no post-op data"). Why they have none is an open question in
 Chapter 1.
-`r if (has_data) sprintf("At most %s of patients are missing any one assessment.", fmt_pct(max(miss$prop_missing), 1)) else ""`
-That is below the plan's five-percent trigger for revisiting the
-missing-data approach (D-015), so the complete-case analyses stand.
+`r if (has_data) s_trigger else ""`
 
 ### Best- and worst-case bounds for the primary outcome
 
 The plan bounds the primary odds ratio by filling in every missing primary
-outcome in the way most and least favourable to licorice (Chapter 3).
+outcome among the patients in the file, in the way most and least
+favourable to licorice (Chapter 3).
 
 ```{r}
 #| echo: false
 #| eval: !expr has_data
 #| tbl-cap: "Primary odds ratio (licorice against sugar water) with missing outcomes filled in."
-b <- results$bounds
+all_bounds <- rbind(cbind(b, n_absent = 0), ab)
 knitr::kable(
   data.frame(
-    Bound = b$bound,
-    `Outcomes filled in` = b$n_filled,
-    `Odds ratio (95% CI)` = fmt_or_cell(b$or, b$lower, b$upper),
-    `p-value` = fmt_p(b$p_value),
+    Bound = c(b$bound, paste(ab$bound, "(post hoc)")),
+    `Outcomes filled in` = all_bounds$n_filled,
+    `Absent patients added` = all_bounds$n_absent,
+    `Odds ratio (95% CI)` = fmt_or_cell(all_bounds$or, all_bounds$lower, all_bounds$upper),
+    `p-value` = fmt_p(all_bounds$p_value),
     check.names = FALSE
   )
 )
 ```
 
-`r if (has_data) sprintf("In the best case for licorice the odds ratio is %s; in the worst case it is %s. The complete-case estimate (Chapter 6) is %s.", fmt_or(results$bounds[1, ]), fmt_or(results$bounds[2, ]), fmt_or(results$primary)) else ""`
-`r if (has_data) (if (all(results$bounds$upper < 1)) "Both bounds keep the confidence interval below one, so the missing outcomes cannot change the primary conclusion." else "At least one bound has a confidence interval that includes one, so the missing outcomes could change the primary conclusion.") else ""`
+`r if (has_data) s_bounds else ""`
+`r if (has_data) s_bounds_verdict else ""`
+
+`r if (has_data) s_absent else ""`
 
 ```{r}
 #| echo: false
 #| results: asis
 #| eval: !expr has_data
-fit_warnings_note(results, "Best- and worst-case bounds")
+fit_warnings_note(
+  results,
+  c("Best- and worst-case bounds", "Worst-case bound with absent patients (post hoc)")
+)
 ```

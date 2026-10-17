@@ -19,6 +19,47 @@ pa <- results$per_assessment
 later <- pa[-1, ]
 gee <- results$gee
 glmm <- results$glmm
+
+# Data-dependent sentences, each with a branch for the other outcome
+or_below <- all(pa$upper < 1)
+rd_below <- all(pa$rd_upper < 0)
+s_verdict <- if (or_below && rd_below) {
+  paste(
+    "At every assessment, through to the first postoperative morning, the confidence",
+    "interval for the odds ratio lies below one and the interval for the risk",
+    "difference lies below zero. The data are consistent with a benefit that lasts",
+    "beyond the recovery room."
+  )
+} else {
+  sprintf(
+    paste(
+      "Not every interval excludes no effect: the odds-ratio interval includes one at",
+      "%s, and the risk-difference interval includes zero at %s. The table shows",
+      "which effects remain plausible there."
+    ),
+    if (or_below) "no assessment" else paste(pa$assessment[pa$upper >= 1], collapse = ", "),
+    if (rd_below) "no assessment" else paste(pa$assessment[pa$rd_upper >= 0], collapse = ", ")
+  )
+}
+s_conditional <- if (abs(glmm$log_or) > abs(gee$log_or)) {
+  sprintf(
+    paste(
+      "The conditional odds ratio is further from one than the marginal one. That is",
+      "expected whenever patients differ in their underlying risk, which the",
+      "random-intercept SD of %s indicates. It does not mean the treatment effect is",
+      "larger. Odds ratios are non-collapsible, so averaging patient-level effects",
+      "over patients with different baseline risks pulls the population-averaged odds",
+      "ratio toward one (D-008)."
+    ),
+    fmt_num(glmm$sd_patient, 2)
+  )
+} else {
+  paste(
+    "Unusually, the conditional odds ratio is no further from one than the marginal",
+    "one, although non-collapsibility would make it so when patients differ in risk",
+    "(D-008). This deserves a closer look before either is reported."
+  )
+}
 ```
 
 The PI asked whether the effect lasts past the recovery room
@@ -52,8 +93,8 @@ knitr::kable(
 ```
 
 `r if (has_data) sprintf("At ninety minutes the odds ratio is %s; at four hours it is %s; and on the first postoperative morning it is %s.", fmt_or(later[1, ]), fmt_or(later[2, ]), fmt_or(later[3, ])) else ""`
-`r if (has_data) sprintf("Sore throat in the sugar-water arm stays common throughout, between %s and %s, and the risk difference on the first postoperative morning is %s.", fmt_pct(min(pa$p_sugar)), fmt_pct(max(pa$p_sugar)), fmt_rd(later[3, ])) else ""`
-`r if (has_data) (if (all(pa$upper < 1)) "At every assessment, through to the first postoperative morning, the confidence interval for the odds ratio lies below one and the interval for the risk difference lies below zero. The data are consistent with a benefit that lasts beyond the recovery room." else "At least one assessment has a confidence interval that includes no effect; see the table for which effects remain plausible there.") else ""`
+`r if (has_data) sprintf("Across the assessments, between %s and %s of the sugar-water arm had a sore throat, and the risk difference on the first postoperative morning is %s.", fmt_pct(min(pa$p_sugar)), fmt_pct(max(pa$p_sugar)), fmt_rd(later[3, ])) else ""`
+`r if (has_data) s_verdict else ""`
 These are descriptive estimates at secondary time points, with no
 adjustment for multiplicity (D-003).
 
@@ -73,7 +114,7 @@ errors (D-007). Its odds ratio is on the same population-averaged scale as
 the table above.
 
 `r if (has_data) sprintf("The common marginal odds ratio is %s (%s; %d patients, %d observations).", fmt_or(gee), fmt_p(gee$p_value), gee$n_patients, gee$n_obs) else ""`
-`r if (has_data) sprintf("The estimated within-patient working correlation is %s: a patient's outcomes at different assessments are substantially correlated, which is why the assessments cannot be treated as independent.", fmt_num(gee$working_correlation, 2)) else ""`
+`r if (has_data) sprintf("The estimated within-patient working correlation is %s. The robust standard errors allow for this correlation between a patient's assessments.", fmt_num(gee$working_correlation, 2)) else ""`
 
 ### Conditional (patient-level): the mixed model
 
@@ -85,13 +126,8 @@ appears.
 
 `r if (has_data) sprintf("The common conditional (patient-level) odds ratio is %s (%s). The estimated standard deviation of the patient random intercept is %s on the log-odds scale.", fmt_or(glmm), fmt_p(glmm$p_value), fmt_num(glmm$sd_patient, 2)) else ""`
 
-The conditional odds ratio is further from one than the marginal one.
-That is expected whenever patients differ a lot in their underlying risk,
-as the large random-intercept SD shows here. It does not mean the
-treatment effect is larger. Odds ratios are non-collapsible, so averaging
-patient-level effects over a population with very different baseline
-risks pulls the population-averaged odds ratio toward one (D-008). The
-question the PI asked is about patients as a population, and the marginal
+`r if (has_data) s_conditional else ""`
+The PI's question is about patients as a population, and the marginal
 estimates answer it.
 
 ```{r}

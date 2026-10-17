@@ -20,13 +20,18 @@ analysis_results <- function(clean) {
   per_assessment <- do.call(rbind, lapply(levels(long$assessment), function(a) {
     fits$record(paste("Logistic regression,", a), fit_assessment(long, a))
   }))
+  primary_y <- any_sore_throat(clean$throat_pain_pacu30)
+  enrolled <- raw_codebook()$enrolled
 
   # list() evaluates in order, so models and warnings come after every fit
   list(
     n_patients = nrow(clean),
+    n_enrolled = enrolled,
     n_by_arm = c(table(clean$treatment)),
     baseline = table_one(clean, "treatment", baseline_vars()),
+    baseline_missing_n = sum(is.na(clean[baseline_vars()])),
     preop_sore_throat_n = sum(clean$preop_sore_throat == "Yes"),
+    adjusted_merged = merged_covariates(adjusted_model_data(clean)),
     missing = missing_by_arm(long),
     no_postop_n = sum(tapply(is.na(long$sore_throat), long$patient_id, all)),
     per_assessment = per_assessment,
@@ -36,7 +41,11 @@ analysis_results <- function(clean) {
     adjusted = fits$record("Adjusted logistic regression", fit_adjusted(clean)),
     bounds = fits$record(
       "Best- and worst-case bounds",
-      missing_bounds(any_sore_throat(clean$throat_pain_pacu30), clean$treatment)
+      missing_bounds(primary_y, clean$treatment)
+    ),
+    absent_bound = fits$record(
+      "Worst-case bound with absent patients (post hoc)",
+      absent_worst_case(primary_y, clean$treatment, enrolled - nrow(clean))
     ),
     models = fits$models(),
     warnings = fits$table()

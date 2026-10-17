@@ -43,7 +43,9 @@ raw_codebook <- function() {
     max = c(80, 120, 3, 3, 10, 10, 3, 10, 3, 10, 3, 10),
     whole = c(FALSE, FALSE, rep(TRUE, 10))
   )
-  list(factors = factors, numbers = numbers, required = "treat")
+  # Enrolled patients, as the codebook states; the delivered file may have
+  # fewer (Chapter 1, open questions)
+  list(factors = factors, numbers = numbers, required = "treat", enrolled = 236)
 }
 
 #' Raw delivery -> one row per patient, validated and labeled

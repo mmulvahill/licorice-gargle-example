@@ -14,9 +14,15 @@ test_that("analysis_results records every fit and every estimate the chapters us
   expect_equal(results$models, c(
     paste("Logistic regression,", assessment_labels()),
     "GEE, common marginal OR", "Mixed model, common conditional OR",
-    "Adjusted logistic regression", "Best- and worst-case bounds"
+    "Adjusted logistic regression", "Best- and worst-case bounds",
+    "Worst-case bound with absent patients (post hoc)"
   ))
   expect_equal(results$n_patients, 235)
+  expect_equal(results$n_enrolled, 236)
+  expect_equal(results$absent_bound$n_absent, 1)
+  expect_equal(results$absent_bound$n_obs, 236)
+  expect_equal(results$baseline_missing_n, 0)
+  expect_type(results$adjusted_merged, "character")
   expect_equal(sum(results$n_by_arm), 235)
   expect_equal(nrow(results$per_assessment), 4)
   expect_equal(results$primary$assessment, "PACU 30 min")

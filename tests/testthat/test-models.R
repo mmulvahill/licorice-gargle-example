@@ -55,6 +55,19 @@ test_that("missing_bounds fills in missing outcomes the right way round", {
   expect_equal(bounds$n_obs, c(23, 23))
 })
 
+test_that("absent_worst_case adds absent patients to licorice with sore throat", {
+  # The same data as above; the worst case is licorice 4 yes / 7 no, sugar
+  # water 6 yes / 6 no. One absent patient makes licorice 5 yes / 7 no.
+  y <- c(rep(1, 6), rep(0, 4), NA, NA, rep(1, 3), rep(0, 7), NA)
+  extended <- absent_worst_case(y, arms(12, 11), n_absent = 1)
+  expect_equal(extended$or, (5 / 7) / (6 / 6), tolerance = 1e-6)
+  expect_equal(c(extended$n_filled, extended$n_absent, extended$n_obs), c(3, 1, 24))
+  # With nobody absent it is the worst case of missing_bounds()
+  none <- absent_worst_case(y, arms(12, 11), n_absent = 0)
+  expect_equal(none$or, missing_bounds(y, arms(12, 11))$or[2], tolerance = 1e-8)
+  expect_error(absent_worst_case(y, arms(12, 11), n_absent = -1), "more patients")
+})
+
 test_that("fit_assessment uses only the named assessment's observed rows", {
   long <- data.frame(
     patient_id = rep(1:8, each = 2),
@@ -108,6 +121,12 @@ test_that("preoperative sore throat enters the adjusted model only with 10 patie
   d$asa[6:40] <- "III"
   expect_equal(levels(adjusted_model_data(d)$data$asa), c("I/II", "III"))
   expect_match(fit_adjusted(d)$covariates, "asa")
+  # Only covariates still in the model are reported as merged
+  expect_true("asa" %in% merged_covariates(adjusted_model_data(d)))
+  expect_false("sex" %in% merged_covariates(adjusted_model_data(d)))
+  d$preop_sore_throat[] <- "No"
+  d$preop_sore_throat[1:2] <- "Yes"
+  expect_false("preop_sore_throat" %in% merged_covariates(adjusted_model_data(d)))
 })
 
 test_that("marginal_risk integrates the random intercept correctly", {

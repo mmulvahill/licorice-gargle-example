@@ -157,6 +157,15 @@ adjusted_model_data <- function(clean, min_n = 10) {
   list(data = d, covariates = c("age", "bmi", kept))
 }
 
+#' Covariates in the adjusted model that had sparse categories merged
+#'
+#' @param model Output of `adjusted_model_data()`.
+#' @return Names of the model's factor covariates with a merged level.
+merged_covariates <- function(model) {
+  is_merged <- function(x) is.factor(x) && any(grepl("/", levels(x), fixed = TRUE))
+  Filter(function(v) is_merged(model$data[[v]]), model$covariates)
+}
+
 #' Covariate-adjusted logistic regression of the primary outcome
 #'
 #' The odds ratio is conditional on the covariates, so it differs from the
@@ -196,5 +205,38 @@ missing_bounds <- function(y, treatment) {
     bound = c("Best case for licorice", "Worst case for licorice"),
     rbind(fill(0, 1), fill(1, 0)),
     n_filled = sum(is.na(y))
+  )
+}
+
+#' Worst case for licorice, also counting enrolled patients absent from the file
+#'
+#' Post hoc (D-021). `missing_bounds()` covers only patients in the file.
+#' This extends its worst case to patients the codebook counts as enrolled
+#' but who are not in the file: each is added to the licorice arm with a
+#' sore throat, the least favourable arm and outcome for licorice.
+#'
+#' @param y 0/1 primary outcome with missing values.
+#' @param treatment Factor with levels "Sugar water" and "Licorice".
+#' @param n_absent Enrolled patients not in the file.
+#' @return One row from `odds_ratio()`, labeled by `bound`, with the numbers
+#'   of outcomes filled in and of absent patients added.
+absent_worst_case <- function(y, treatment, n_absent) {
+  if (n_absent < 0) {
+    stop("The file has more patients than were enrolled", call. = FALSE)
+  }
+  licorice <- treatment == "Licorice"
+  n_filled <- sum(is.na(y))
+  y[is.na(y)] <- as.numeric(licorice[is.na(y)])
+  y <- c(y, rep(1, n_absent))
+  arm <- factor(
+    c(as.character(treatment), rep("Licorice", n_absent)),
+    levels = levels(treatment)
+  )
+  fit <- stats::glm(y ~ arm, family = stats::binomial())
+  est <- odds_ratio(fit, "armLicorice")
+  est$term <- treatment_term
+  cbind(
+    bound = "Worst case for licorice, with absent patients",
+    est, n_filled = n_filled, n_absent = n_absent
   )
 }

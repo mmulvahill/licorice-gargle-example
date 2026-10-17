@@ -106,3 +106,30 @@ the mixed model, the adjusted model and the bounds.
   and no warnings. The GEE had bias 0.032, coverage 0.925, and working
   correlation 0.478 against a true 0.486. Both fits are trustworthy at the
   trial's clustering.
+
+**2026-10-17** Fixes after the fresh-session analysis review. The review
+found nothing that changes a conclusion.
+
+1. The SD 2.75 recovery run had not been committed. It is now scenario 4
+   in `test-recovery.R`, with fixed seeds; the earlier run was
+   uncommitted, with other seeds.
+   - Mixed model: bias -0.010, coverage 0.950, SE/SD 0.99, mean patient
+     SD 2.777, no warnings.
+   - GEE: bias -0.017, coverage 0.955, SE/SD 0.95, working correlation
+     0.481 against a true 0.486.
+   - The review's concern about GEE coverage of 0.925 looks like Monte
+     Carlo noise: on the committed seeds it is 0.955.
+   - `make test` now takes about two minutes.
+2. The bounds claims now say they cover only patients in the file. A post
+   hoc worst case (D-021) adds the 1 enrolled patient missing from the
+   file to licorice with a sore throat: OR 0.45 (0.25 to 0.81), matching
+   the review's check. The enrollment count of 236 is now in
+   `raw_codebook()`, so the number of absent patients is computed.
+3. Every data-dependent claim the review listed now has a computed branch
+   for the other outcome, in Chapters 2, 5, 6 and 7. So does "the arms
+   are similar at baseline", which the review did not list; it was a
+   judgement on the data and has been removed.
+4. D-020's date corrected.
+
+The summary (`index.qmd`) is written from computed results, with the open
+client questions listed.

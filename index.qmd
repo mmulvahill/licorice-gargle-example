@@ -14,14 +14,179 @@ if (!has_data) {
 }
 ```
 
-**Question.** The client's question, once confirmed (Chapter 1).
+```{r}
+#| include: false
+#| eval: !expr has_data
+# Every data-dependent sentence is built here from `results`, with a branch
+# for each way the data could fall.
+p <- results$primary
+pa <- results$per_assessment
+later <- pa[-1, ]
+b <- results$bounds
+ab <- results$absent_bound
+adj <- results$adjusted
 
-**Answer.** Written last, from computed results only.
+s_primary <- sprintf(
+  paste(
+    "Thirty minutes after arrival in the recovery room, %s patients who gargled",
+    "sugar water had a sore throat at rest, against %s who gargled licorice: a",
+    "risk difference of %s. The marginal odds ratio is %s (%s)."
+  ),
+  fmt_prop(p$p_sugar, p$n_sugar), fmt_prop(p$p_licorice, p$n_licorice),
+  fmt_rd(p), fmt_or(p), fmt_p(p$p_value)
+)
+s_answer_1 <- if (p$upper < 1) {
+  "**Yes.** Licorice reduced sore throat in the recovery room."
+} else if (p$lower > 1) {
+  "**No.** Sore throat was more common after licorice."
+} else {
+  "**Not shown.** The data cannot rule out no effect."
+}
+s_robust <- sprintf(
+  paste(
+    "Adjusting for baseline covariates gives a conditional odds ratio of %s.",
+    "Filling in the missing outcomes of patients in the file in the way least",
+    "favourable to licorice gives %s.%s"
+  ),
+  fmt_or(adj), fmt_or(b[2, ]),
+  if (ab$n_absent > 0) {
+    sprintf(
+      paste(
+        " Also counting the %d enrolled %s absent from the file as a licorice",
+        "patient with a sore throat (post hoc) gives %s."
+      ),
+      ab$n_absent, if (ab$n_absent == 1) "patient" else "patients", fmt_or(ab)
+    )
+  } else {
+    ""
+  }
+)
+s_robust_verdict <- if (all(c(adj$upper, b$upper, ab$upper) < 1)) {
+  "None of these checks moves the confidence interval to include one."
+} else {
+  "At least one of these checks gives a confidence interval that includes one (Chapters 2 and 6)."
+}
 
-**How to read this book.** It is both the lab notebook and the report. The
-*Plan* part is written before the results; the *Results* part follows it;
-the *Record* part holds every analysis decision and the research log. Every
-number in the Plan and Results prose is computed from the data when the book
-renders, so the text cannot drift from the analysis; `make numbers` checks
-this. The decision record and research log are hand-written logs, and say
-so.
+or_below <- all(pa$upper < 1)
+rd_below <- all(pa$rd_upper < 0)
+s_answer_2 <- if (or_below && rd_below) {
+  "**The data are consistent with a benefit that lasts past the recovery room.**"
+} else {
+  "**The data do not show a benefit at every later assessment.**"
+}
+s_durability <- sprintf(
+  paste(
+    "The marginal odds ratio is %s at ninety minutes, %s at four hours and %s on",
+    "the first postoperative morning, when the risk difference is %s."
+  ),
+  fmt_or(later[1, ]), fmt_or(later[2, ]), fmt_or(later[3, ]), fmt_rd(later[3, ])
+)
+s_durability_verdict <- if (or_below && rd_below) {
+  paste(
+    "At every assessment the confidence interval for the odds ratio lies below one",
+    "and the interval for the risk difference below zero. These are descriptive",
+    "estimates with no formal test across time and no multiplicity adjustment",
+    "(D-003, D-013)."
+  )
+} else {
+  paste(
+    "At least one later assessment has an interval that includes no effect. That",
+    "does not show the effect wore off, only that the data cannot rule out no",
+    "effect there (D-013)."
+  )
+}
+s_common <- sprintf(
+  paste(
+    "Summarising all four assessments in one number, which assumes a common effect",
+    "and does not itself answer this question, the population-averaged (marginal)",
+    "odds ratio is %s. The patient-level (conditional) odds ratio from the mixed",
+    "model is %s.%s"
+  ),
+  fmt_or(results$gee), fmt_or(results$glmm),
+  if (abs(results$glmm$log_or) > abs(results$gee$log_or)) {
+    paste(
+      " It is further from one because it compares the same patient under each",
+      "gargle, not because the effect is larger (D-008)."
+    )
+  } else {
+    " Unusually, it is no further from one than the marginal estimate (Chapter 7)."
+  }
+)
+s_enrolled <- if (ab$n_absent > 0) {
+  sprintf(
+    paste(
+      "**Enrolled but not in the file.** The codebook counts %d enrolled; the file",
+      "has %d. Why is not yet known."
+    ),
+    results$n_enrolled, results$n_patients
+  )
+} else {
+  "**Enrollment.** The file holds every enrolled patient."
+}
+s_no_postop <- sprintf(
+  paste(
+    "**No post-operative data.** %d patients in the file have no post-operative",
+    "data. Why is not yet known; they are in the bounds above."
+  ),
+  results$no_postop_n
+)
+```
+
+## The questions
+
+The PI asked, at the intake meeting (Chapter 1):
+
+> "did it reduce sore throat afterwards?"
+
+> "does it last past the recovery room?"
+
+Every comparison is licorice against sugar water, among patients
+randomized to them, with any sore throat at rest (a score above zero on the
+zero-to-ten scale) as the outcome.
+
+## Did it reduce sore throat?
+
+`r if (has_data) s_answer_1 else "*Awaiting results.*"`
+`r if (has_data) s_primary else ""`
+
+`r if (has_data) s_robust else ""`
+`r if (has_data) s_robust_verdict else ""`
+Details are in Chapter 6, with the bounds in Chapter 2.
+
+## Does it last past the recovery room?
+
+`r if (has_data) s_answer_2 else "*Awaiting results.*"`
+`r if (has_data) s_durability else ""`
+`r if (has_data) s_durability_verdict else ""`
+
+`r if (has_data) s_common else ""`
+Details are in Chapter 7.
+
+## What is still open
+
+These questions for the client could not be answered from the data
+(Chapter 1).
+
+- `r if (has_data) s_enrolled else "**Enrollment.** To be checked when data arrive."`
+  If a randomized patient is missing, the analysis is not fully intention
+  to treat.
+- `r if (has_data) s_no_postop else "**No post-operative data.** To be checked when data arrive."`
+- **Swallowing pain.** Not analysed. The PI was undecided. Adding it now,
+  after the results have been seen, would be a post hoc analysis and would
+  be reported as one.
+- **Stratified randomization.** Not yet known. If randomization was
+  stratified, the unadjusted analysis gives conservative standard errors.
+- **Preoperative sore throat in the protocol.** Whether the protocol
+  excluded these patients is not yet known. The analysis keeps them
+  (D-005).
+
+## How to read this book
+
+It is both the lab notebook and the report. The *Plan* part was written
+before the results. Additions made after it was locked are marked as such,
+and the one made after results were seen is labeled post hoc. The
+*Results* part follows it, and the *Record* part holds every analysis
+decision and the research log. Every number in the Plan, Results and
+Summary prose is computed from the data when the book renders, so the
+text cannot drift from the analysis; `make numbers` checks this. The
+decision record and research log are hand-written logs, and say so.

@@ -23,6 +23,63 @@ covariate_labels <- c(
   preop_sore_throat = "sore throat before surgery"
 )
 adj_covariates <- covariate_labels[strsplit(adj$covariates, ", ")[[1]]]
+
+# Data-dependent sentences, each with a branch for the other outcome
+rr <- p$p_licorice / p$p_sugar
+s_rr <- sprintf(
+  paste(
+    "The ratio of the two proportions (the relative risk) is %s. The odds ratio is",
+    "%s one than that, as it always is when the outcome is not rare, so the risk",
+    "difference above is the easier number to read (D-006)."
+  ),
+  fmt_num(rr, 2),
+  if (abs(log(p$or)) > abs(log(rr))) "further from" else "no further from"
+)
+b <- results$bounds
+ab <- results$absent_bound
+s_bounds <- if (all(b$upper < 1)) {
+  paste(
+    "The missing outcomes of patients in the file cannot change this conclusion:",
+    "the best- and worst-case bounds both keep the confidence interval below one",
+    "(Chapter 2)."
+  )
+} else {
+  paste(
+    "The missing outcomes of patients in the file could change this conclusion:",
+    "at least one bound has a confidence interval that includes one (Chapter 2)."
+  )
+}
+s_absent <- if (ab$n_absent == 0) {
+  ""
+} else if (ab$upper < 1) {
+  sprintf(
+    paste(
+      "Those bounds do not cover the %d enrolled %s absent from the file. A post hoc",
+      "worst case that also counts %s as a licorice patient with a sore throat still",
+      "keeps the interval below one, at %s (D-021)."
+    ),
+    ab$n_absent, if (ab$n_absent == 1) "patient" else "patients",
+    if (ab$n_absent == 1) "that patient" else "them", fmt_or(ab)
+  )
+} else {
+  sprintf(
+    paste(
+      "Those bounds do not cover the %d enrolled patients absent from the file; a",
+      "post hoc worst case that counts them as licorice patients with a sore throat",
+      "gives %s, an interval that includes one (D-021)."
+    ),
+    ab$n_absent, fmt_or(ab)
+  )
+}
+same_direction <- sign(adj$log_or) == sign(p$log_or)
+both_exclude_one <- (adj$upper < 1 || adj$lower > 1) && (p$upper < 1 || p$lower > 1)
+s_compare <- sprintf(
+  "The unadjusted odds ratio is %s. The two estimates %s%s.",
+  fmt_or(p),
+  if (same_direction) "point the same way" else "point in opposite directions",
+  if (both_exclude_one) ", and neither confidence interval includes one" else
+    ", and at least one confidence interval includes one"
+)
 ```
 
 The primary question is whether a licorice gargle, compared with a
@@ -45,13 +102,10 @@ ratio. It compares the odds of sore throat had every patient gargled
 licorice with the odds had every patient gargled sugar water.
 
 `r if (has_data) sprintf("The marginal odds ratio is %s (%s, %d patients).", fmt_or(p), fmt_p(p$p_value), p$n_obs) else ""`
-Because sore throat is common, the odds ratio is further from one than
-the ratio of the two proportions, so the risk difference above is the
-easier number to read (D-006).
+`r if (has_data) s_rr else ""`
 
-Patients missing the primary outcome cannot change this conclusion: the
-best- and worst-case bounds both keep the confidence interval below one
-(Chapter 2).
+`r if (has_data) s_bounds else ""`
+`r if (has_data) s_absent else ""`
 
 ## Sensitivity analysis: adjusted for baseline covariates
 
@@ -66,8 +120,8 @@ This is a **conditional** odds ratio. It compares patients with the same
 covariate values, not the whole population. Odds ratios are
 non-collapsible, so the adjusted odds ratio differs from the unadjusted
 one even when the arms are perfectly balanced. A difference between the
-two is not evidence of confounding (D-009). The two estimates agree in
-direction and their confidence intervals overlap almost entirely.
+two is not evidence of confounding (D-009).
+`r if (has_data) s_compare else ""`
 
 ```{r}
 #| echo: false

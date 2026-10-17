@@ -116,6 +116,11 @@ conclusion holds at both bounds, the missing patients cannot change it.
 
 Bounds are computed for the primary outcome only (D-010, D-015).
 
+*Added after results were seen (post hoc; D-021):* these bounds cover
+only the patients in the delivered file. A further worst case adds every
+enrolled patient absent from the file to the licorice arm with a sore
+throat.
+
 The number of patients missing each outcome, by arm, is reported in the
 data chapter (D-012). If more than five percent of patients are missing
 the outcome at any assessment, the missing-data approach is revisited
