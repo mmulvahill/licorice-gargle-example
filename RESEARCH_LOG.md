@@ -56,3 +56,32 @@ constant (D-018). Two findings:
 - 90% CIs were caught only by the GEE and adjusted-model coverage checks,
   so `odds_ratio()` now has an exact CI check.
 - After both changes, all 13 breaks fail at least one test.
+
+**2026-10-17** The break harness is now committed as
+`scripts/check_test_breaks.R`. D-020 was confirmed by the analyst before
+any fit to trial data. The final run, against the final tests, lists for
+each break the tests that failed:
+
+- Mixed model swapped for a logistic regression ignoring patients: the
+  mixed-model recovery test (bias 0.248 against an allowed 0.08; coverage
+  0.525).
+- Mixed model by Laplace: the mixed-model recovery test (mean patient SD
+  off by 0.128 against an allowed 0.1).
+- GEE ignoring patients: the GEE recovery test (coverage 0.83; SE ratio
+  0.70; working correlation off by 0.271, i.e. estimated near zero).
+- GEE with independence correlation: the GEE recovery test (no working
+  correlation).
+- Per-time fit pooling the assessments: the `fit_assessment` known
+  answers, plus per-assessment recovery (coverage, SE ratio and sample
+  size).
+- RD sign flipped: the RD known answers and RD recovery.
+- RD SE using the total n: the RD known answers, plus RD coverage at one
+  assessment.
+- 90% CIs: the `odds_ratio` known answers, plus GEE and adjusted coverage.
+- Adjusted model without covariates: adjusted recovery (the large-sample
+  estimate off by 0.171 against an allowed 0.06).
+- Sparse levels never merged: the merge and covariate-rule known answers.
+- Bounds labels swapped, or both arms filled the same way: the bounds
+  known answers.
+- Integration using the variance as the SD: the integration known answers,
+  plus per-assessment and GEE recovery.

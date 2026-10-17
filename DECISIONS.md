@@ -348,9 +348,9 @@ typed; the report chapters compute theirs.
 ## D-020: Mixed model fitted by adaptive quadrature (9 points)
 
 - **Date:** 2026-10-16
-- **Decided by:** *Proposed* by Claude; awaiting confirmation from Matt
-  Mulvahill (analyst).
-- **Decision:** *Proposed:* the random-intercept mixed model (D-008) is
+- **Decided by:** Matt Mulvahill (analyst), confirming Claude's proposal
+  on 2026-10-17, before any model was fitted to the trial data.
+- **Decision:** The random-intercept mixed model (D-008) is
   fitted with `lme4::glmer(nAGQ = 9)`, adaptive Gauss-Hermite quadrature
   with 9 points, instead of the default Laplace approximation (`nAGQ = 1`).
   The estimand, terms and software are unchanged.
