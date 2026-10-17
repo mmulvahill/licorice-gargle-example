@@ -85,3 +85,24 @@ each break the tests that failed:
   known answers.
 - Integration using the variance as the SD: the integration known answers,
   plus per-assessment and GEE recovery.
+
+**2026-10-17** First fit to the trial data, by `make results`. All 8 fits
+ran with no warnings: four per-assessment logistic regressions, the GEE,
+the mixed model, the adjusted model and the bounds.
+
+- Missingness is only the 2 patients with no post-operative data, 1 per
+  arm (0.9% at each assessment). That is under the D-015 trigger.
+- Preoperative sore throat (2 patients) is left out of the adjusted model
+  by D-011, and nothing is merged under D-016.
+- Primary, at thirty minutes: 42 of 116 with sore throat on sugar water
+  against 22 of 117 on licorice. The marginal OR is 0.41 (0.22 to 0.74),
+  and the bounds run from 0.39 to 0.43, both with CIs below 1.
+- The per-assessment ORs stay below 1 through the first postoperative
+  morning (0.39, 0.22 to 0.70).
+- GEE common marginal OR: 0.34. Mixed-model conditional OR: 0.14, with a
+  patient SD of 2.76, well above the 1.5 used in the recovery tests.
+- I reran the mixed-model and GEE recovery (200 simulated trials each) at
+  SD 2.75. The mixed model had bias 0.001, coverage 0.965, mean SD 2.796
+  and no warnings. The GEE had bias 0.032, coverage 0.925, and working
+  correlation 0.478 against a true 0.486. Both fits are trustworthy at the
+  trial's clustering.

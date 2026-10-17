@@ -1,0 +1,108 @@
+# Does it last?
+
+```{r}
+#| include: false
+source(here::here("chapters", "_setup.R"))
+```
+
+```{r}
+#| eval: !expr '!has_data'
+#| echo: false
+#| results: asis
+cat("*No results yet.*\n")
+```
+
+```{r}
+#| include: false
+#| eval: !expr has_data
+pa <- results$per_assessment
+later <- pa[-1, ]
+gee <- results$gee
+glmm <- results$glmm
+```
+
+The PI asked whether the effect lasts past the recovery room
+(Chapter 1). The plan answers this from the estimate at each assessment,
+read together with its confidence interval. There is no formal test across
+assessments (D-002, D-003, D-013). A later assessment whose interval
+included one would not show that the effect had worn off; it would show
+only that the data could not rule out no effect at that time.
+
+## The effect at each assessment
+
+Each row is a separate unadjusted logistic regression in the patients
+observed at that assessment, so each odds ratio is marginal (D-007).
+Risk differences are licorice minus sugar water, in percentage points.
+
+```{r}
+#| echo: false
+#| eval: !expr has_data
+#| tbl-cap: "Any sore throat at rest at each assessment: licorice against sugar water."
+knitr::kable(
+  data.frame(
+    Assessment = pa$assessment,
+    `Sugar water` = fmt_prop(pa$p_sugar, pa$n_sugar),
+    Licorice = fmt_prop(pa$p_licorice, pa$n_licorice),
+    `Risk difference (95% CI)` = fmt_rd_cell(pa$rd, pa$rd_lower, pa$rd_upper),
+    `Odds ratio (95% CI)` = fmt_or_cell(pa$or, pa$lower, pa$upper),
+    `p-value` = fmt_p(pa$p_value),
+    check.names = FALSE
+  )
+)
+```
+
+`r if (has_data) sprintf("At ninety minutes the odds ratio is %s; at four hours it is %s; and on the first postoperative morning it is %s.", fmt_or(later[1, ]), fmt_or(later[2, ]), fmt_or(later[3, ])) else ""`
+`r if (has_data) sprintf("Sore throat in the sugar-water arm stays common throughout, between %s and %s, and the risk difference on the first postoperative morning is %s.", fmt_pct(min(pa$p_sugar)), fmt_pct(max(pa$p_sugar)), fmt_rd(later[3, ])) else ""`
+`r if (has_data) (if (all(pa$upper < 1)) "At every assessment, through to the first postoperative morning, the confidence interval for the odds ratio lies below one and the interval for the risk difference lies below zero. The data are consistent with a benefit that lasts beyond the recovery room." else "At least one assessment has a confidence interval that includes no effect; see the table for which effects remain plausible there.") else ""`
+These are descriptive estimates at secondary time points, with no
+adjustment for multiplicity (D-003).
+
+## Common odds ratios across the four assessments
+
+The two models below summarise all four assessments with one odds ratio.
+Each assumes that the effect is the same at every assessment. Neither
+answers whether the effect lasts; the table above does (D-014). They
+estimate different things and should not be compared as if they were the
+same quantity.
+
+### Marginal (population-averaged): the GEE
+
+A generalized estimating equation with treatment and assessment as terms,
+an exchangeable working correlation within patient, and robust standard
+errors (D-007). Its odds ratio is on the same population-averaged scale as
+the table above.
+
+`r if (has_data) sprintf("The common marginal odds ratio is %s (%s; %d patients, %d observations).", fmt_or(gee), fmt_p(gee$p_value), gee$n_patients, gee$n_obs) else ""`
+`r if (has_data) sprintf("The estimated within-patient working correlation is %s: a patient's outcomes at different assessments are substantially correlated, which is why the assessments cannot be treated as independent.", fmt_num(gee$working_correlation, 2)) else ""`
+
+### Conditional (patient-level): the mixed model
+
+A logistic mixed model with the same terms and a random intercept for
+patient, fitted by adaptive quadrature (D-008, D-020). Its odds ratio
+compares the odds for the **same patient** under licorice and under sugar
+water. It is a supporting estimate only, labeled conditional wherever it
+appears.
+
+`r if (has_data) sprintf("The common conditional (patient-level) odds ratio is %s (%s). The estimated standard deviation of the patient random intercept is %s on the log-odds scale.", fmt_or(glmm), fmt_p(glmm$p_value), fmt_num(glmm$sd_patient, 2)) else ""`
+
+The conditional odds ratio is further from one than the marginal one.
+That is expected whenever patients differ a lot in their underlying risk,
+as the large random-intercept SD shows here. It does not mean the
+treatment effect is larger. Odds ratios are non-collapsible, so averaging
+patient-level effects over a population with very different baseline
+risks pulls the population-averaged odds ratio toward one (D-008). The
+question the PI asked is about patients as a population, and the marginal
+estimates answer it.
+
+```{r}
+#| echo: false
+#| results: asis
+#| eval: !expr has_data
+fit_warnings_note(results, c(
+  "Logistic regression, PACU 90 min",
+  "Logistic regression, 4 h after surgery",
+  "Logistic regression, First postoperative morning",
+  "GEE, common marginal OR",
+  "Mixed model, common conditional OR"
+))
+```

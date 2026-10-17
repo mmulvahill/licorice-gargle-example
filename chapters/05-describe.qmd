@@ -5,4 +5,46 @@
 source(here::here("chapters", "_setup.R"))
 ```
 
-Describe the sample, then a Table 1 from `table_one()`.
+```{r}
+#| eval: !expr '!has_data'
+#| echo: false
+#| results: asis
+cat("*No data yet.*\n")
+```
+
+`r if (has_data) sprintf("All %d patients in the file are described here, in the arm they were randomized to: %d sugar water and %d licorice.", results$n_patients, results$n_by_arm[["Sugar water"]], results$n_by_arm[["Licorice"]]) else ""`
+Baseline data are complete. Continuous variables are shown as mean (SD)
+and categorical variables as n (%).
+
+```{r}
+#| echo: false
+#| eval: !expr has_data
+#| tbl-cap: "Baseline characteristics by randomized arm."
+labels <- c(
+  age = "Age (years)", sex = "Sex", bmi = "Body mass index (kg/m²)",
+  asa = "ASA physical status", mallampati = "Mallampati class",
+  smoking = "Smoking", preop_sore_throat = "Sore throat before surgery",
+  surgery_size = "Surgery size"
+)
+t1 <- results$baseline
+t1$variable <- ifelse(duplicated(t1$variable), "", labels[t1$variable])
+knitr::kable(t1, col.names = c("", "", "Sugar water", "Licorice"))
+```
+
+The arms are similar at baseline. Any differences between randomized arms
+are due to chance, so there are no significance tests here, and nothing
+in this table was used to choose covariates for the adjusted analysis.
+Those were fixed in the plan (Chapter 3; D-009), for the reason given in
+Chapter 4.
+
+Two baseline facts matter for the pre-specified analyses:
+
+- `r if (has_data) sprintf("Only %d patients had a sore throat before surgery.", results$preop_sore_throat_n) else ""`
+  That is fewer than ten, so by the plan's rule this variable is left out
+  of the adjusted model (D-011). The primary analysis keeps these patients
+  (D-005).
+- No other covariate in the adjusted model has a category with fewer than
+  ten patients, so no categories are merged (D-016). Mallampati class has
+  a very small top category, but it is not in any model (D-016).
+
+No models are fitted in this chapter.

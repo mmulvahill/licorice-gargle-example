@@ -2,9 +2,29 @@
 # warnings from model fits are kept.
 
 test_that("analysis_results returns the model labels and warning table", {
-  results <- analysis_results(data.frame(x = 1:3))
+  set.seed(5)
+  results <- analysis_results(simulate_clean())
   expect_true(all(c("models", "warnings") %in% names(results)))
   expect_named(results$warnings, c("model", "warning"))
+})
+
+test_that("analysis_results records every fit and every estimate the chapters use", {
+  set.seed(6)
+  results <- analysis_results(simulate_clean())
+  expect_equal(results$models, c(
+    paste("Logistic regression,", assessment_labels()),
+    "GEE, common marginal OR", "Mixed model, common conditional OR",
+    "Adjusted logistic regression", "Best- and worst-case bounds"
+  ))
+  expect_equal(results$n_patients, 235)
+  expect_equal(sum(results$n_by_arm), 235)
+  expect_equal(nrow(results$per_assessment), 4)
+  expect_equal(results$primary$assessment, "PACU 30 min")
+  expect_equal(results$primary, results$per_assessment[1, ])
+  expect_equal(results$no_postop_n, 2)
+  expect_equal(results$bounds$n_filled, c(2, 2))
+  expect_equal(results$missing$missing_sugar + results$missing$missing_licorice, rep(2, 4))
+  expect_true(all(c("gee", "glmm", "adjusted", "baseline") %in% names(results)))
 })
 
 test_that("the warning log keeps a warning and still lets it through", {

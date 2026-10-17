@@ -19,6 +19,26 @@ fmt_or <- function(or_row, digits = 2) {
   )
 }
 
+#' "42 of 116 (36%)" from a proportion and its denominator, vectorised
+fmt_prop <- function(p, n, digits = 0) {
+  sprintf("%d of %d (%s)", as.integer(round(p * n)), as.integer(n), fmt_pct(p, digits))
+}
+
+#' "-17.4 percentage points (95% CI -28.7 to -6.2)" from `risk_difference()`
+fmt_rd <- function(rd_row, digits = 1) {
+  sprintf(
+    "%s percentage points (95%% CI %s to %s)",
+    fmt_num(100 * rd_row$rd, digits),
+    fmt_num(100 * rd_row$rd_lower, digits),
+    fmt_num(100 * rd_row$rd_upper, digits)
+  )
+}
+
+#' "-17.4 (-28.7 to -6.2)" in percentage points, for table cells
+fmt_rd_cell <- function(rd, lower, upper, digits = 1) {
+  fmt_or_cell(100 * rd, 100 * lower, 100 * upper, digits)
+}
+
 #' "0.41 (0.22 to 0.74)" for table cells, vectorised over rows
 fmt_or_cell <- function(or, lower, upper, digits = 2) {
   sprintf("%s (%s to %s)", fmt_num(or, digits), fmt_num(lower, digits), fmt_num(upper, digits))

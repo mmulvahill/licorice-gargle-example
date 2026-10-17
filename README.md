@@ -69,7 +69,7 @@ patient data into a personal account.**
 
 ## Pinning package versions
 
-`chapters/09-reproducibility.qmd` records `sessionInfo()`, which says what
+`chapters/10-reproducibility.qmd` records `sessionInfo()`, which says what
 was used but cannot restore it. For your own project, run `renv::init()`
 once, commit `renv.lock`, and have collaborators run `renv::restore()`.
 

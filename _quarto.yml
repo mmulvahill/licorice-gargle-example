@@ -20,11 +20,12 @@ book:
       chapters:
         - chapters/05-describe.qmd
         - chapters/06-primary.qmd
+        - chapters/07-durability.qmd
     - part: "Record"
       chapters:
-        - chapters/07-decisions.qmd
-        - chapters/08-research-log.qmd
-        - chapters/09-reproducibility.qmd
+        - chapters/08-decisions.qmd
+        - chapters/09-research-log.qmd
+        - chapters/10-reproducibility.qmd
 
 format:
   html:

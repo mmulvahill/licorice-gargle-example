@@ -36,3 +36,24 @@ table_one <- function(data, by, vars, digits = 1) {
   rownames(out) <- NULL
   out
 }
+
+#' Missing outcomes at each assessment, by arm and overall (D-012)
+#'
+#' @param long Output of `assessments_long()`.
+#' @return One row per assessment: patients and missing outcomes in each arm,
+#'   and the proportion missing overall (the D-015 trigger is above 0.05).
+missing_by_arm <- function(long) {
+  out <- do.call(rbind, lapply(levels(long$assessment), function(a) {
+    d <- long[long$assessment == a, ]
+    sugar <- d$treatment == "Sugar water"
+    miss <- is.na(d$sore_throat)
+    data.frame(
+      assessment = a,
+      n_sugar = sum(sugar), missing_sugar = sum(miss & sugar),
+      n_licorice = sum(!sugar), missing_licorice = sum(miss & !sugar),
+      prop_missing = mean(miss)
+    )
+  }))
+  rownames(out) <- NULL
+  out
+}

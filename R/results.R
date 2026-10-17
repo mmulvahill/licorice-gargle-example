@@ -15,11 +15,37 @@
 #'   and `warnings` (one row per warning raised while fitting, by model).
 analysis_results <- function(clean) {
   fits <- new_warning_log()
+  long <- assessments_long(clean)
 
+  per_assessment <- do.call(rbind, lapply(levels(long$assessment), function(a) {
+    fits$record(paste("Logistic regression,", a), fit_assessment(long, a))
+  }))
+
+  # list() evaluates in order, so models and warnings come after every fit
   list(
+    n_patients = nrow(clean),
+    n_by_arm = c(table(clean$treatment)),
+    baseline = table_one(clean, "treatment", baseline_vars()),
+    preop_sore_throat_n = sum(clean$preop_sore_throat == "Yes"),
+    missing = missing_by_arm(long),
+    no_postop_n = sum(tapply(is.na(long$sore_throat), long$patient_id, all)),
+    per_assessment = per_assessment,
+    primary = per_assessment[1, ],
+    gee = fits$record("GEE, common marginal OR", fit_gee_common(long)),
+    glmm = fits$record("Mixed model, common conditional OR", fit_glmm_common(long)),
+    adjusted = fits$record("Adjusted logistic regression", fit_adjusted(clean)),
+    bounds = fits$record(
+      "Best- and worst-case bounds",
+      missing_bounds(any_sore_throat(clean$throat_pain_pacu30), clean$treatment)
+    ),
     models = fits$models(),
     warnings = fits$table()
   )
+}
+
+#' The baseline variables in Table 1, in display order
+baseline_vars <- function() {
+  c("age", "sex", "bmi", "asa", "mallampati", "smoking", "preop_sore_throat", "surgery_size")
 }
 
 #' Collect warnings from model fits without hiding them

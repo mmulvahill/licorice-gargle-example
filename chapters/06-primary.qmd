@@ -5,8 +5,76 @@
 source(here::here("chapters", "_setup.R"))
 ```
 
-Start with the simplest version of the answer, then the pre-specified
-primary model from Chapter 3. Estimates come from `results` (fitted once
-by `make results`); write this prose only after they are computed. End with
-`fit_warnings_note(results, c(...))` in a `results: asis` chunk so the
-chapter says whether its models raised warnings.
+```{r}
+#| eval: !expr '!has_data'
+#| echo: false
+#| results: asis
+cat("*No results yet.*\n")
+```
+
+```{r}
+#| include: false
+#| eval: !expr has_data
+p <- results$primary
+adj <- results$adjusted
+covariate_labels <- c(
+  age = "age", bmi = "BMI", sex = "sex", asa = "ASA physical status",
+  smoking = "smoking", surgery_size = "surgery size",
+  preop_sore_throat = "sore throat before surgery"
+)
+adj_covariates <- covariate_labels[strsplit(adj$covariates, ", ")[[1]]]
+```
+
+The primary question is whether a licorice gargle, compared with a
+sugar-water gargle, lowers the odds of any sore throat at rest thirty
+minutes after arrival in the recovery room. "Any" means a score above zero
+on the zero-to-ten scale (D-001). Every comparison below is licorice
+against sugar water, in the patients observed at thirty minutes.
+
+## The simplest answer
+
+`r if (has_data) sprintf("Thirty minutes after arrival in the recovery room, %s patients in the sugar-water arm had a sore throat at rest, compared with %s in the licorice arm.", fmt_prop(p$p_sugar, p$n_sugar), fmt_prop(p$p_licorice, p$n_licorice)) else ""`
+`r if (has_data) sprintf("The risk difference is %s.", fmt_rd(p)) else ""`
+
+## Primary model: the marginal odds ratio
+
+The pre-specified primary model is an unadjusted logistic regression of
+any sore throat on treatment (Chapter 3; D-007). With treatment as its
+only term, its odds ratio is the population-averaged (marginal) odds
+ratio. It compares the odds of sore throat had every patient gargled
+licorice with the odds had every patient gargled sugar water.
+
+`r if (has_data) sprintf("The marginal odds ratio is %s (%s, %d patients).", fmt_or(p), fmt_p(p$p_value), p$n_obs) else ""`
+Because sore throat is common, the odds ratio is further from one than
+the ratio of the two proportions, so the risk difference above is the
+easier number to read (D-006).
+
+Patients missing the primary outcome cannot change this conclusion: the
+best- and worst-case bounds both keep the confidence interval below one
+(Chapter 2).
+
+## Sensitivity analysis: adjusted for baseline covariates
+
+The plan adjusts for baseline covariates as a sensitivity analysis only
+(D-009, D-011). The covariates are listed below. Age and BMI enter as
+linear terms, and the rest as factors.
+
+`r if (has_data) sprintf("Covariates in the model: %s.", paste(adj_covariates, collapse = ", ")) else ""`
+`r if (has_data) sprintf("The covariate-adjusted odds ratio is %s (%s, %d patients).", fmt_or(adj), fmt_p(adj$p_value), adj$n_obs) else ""`
+
+This is a **conditional** odds ratio. It compares patients with the same
+covariate values, not the whole population. Odds ratios are
+non-collapsible, so the adjusted odds ratio differs from the unadjusted
+one even when the arms are perfectly balanced. A difference between the
+two is not evidence of confounding (D-009). The two estimates agree in
+direction and their confidence intervals overlap almost entirely.
+
+```{r}
+#| echo: false
+#| results: asis
+#| eval: !expr has_data
+fit_warnings_note(
+  results,
+  c("Logistic regression, PACU 30 min", "Adjusted logistic regression")
+)
+```
