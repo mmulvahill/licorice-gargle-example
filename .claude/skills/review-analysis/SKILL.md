@@ -1,7 +1,9 @@
 ---
 name: review-analysis
-description: Independent statistical review of the analysis as it stands. Run it in a fresh session so the reviewer did not write the work it is checking.
+description: Independent statistical review of the analysis as it stands. It runs in a separate subagent that never saw the conversation, so the reviewer did not write the work it is checking.
 disable-model-invocation: true
+context: fork
+background: false
 ---
 
 You are reviewing this analysis as an independent senior biostatistician

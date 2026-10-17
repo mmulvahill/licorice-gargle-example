@@ -6,8 +6,11 @@ was run for real, in order, against a fresh copy of
 this repo's git history is the result, one commit (or two) per step.
 The client is fictional; the data and analysis are real.
 
-**Fresh session** means quit and start `claude` again, or open a new
-terminal tab: the reviewer must not be the session that wrote the work.
+The two reviews (`/review-plan`, `/review-analysis`) run in a separate
+subagent that never saw your conversation, so the reviewer did not write
+the work; its findings come back to you in the same session. (The rehearsal
+ran them as separate sessions; the template has since switched to
+subagents, which keep the reviewer just as unaware of the conversation.)
 Where Claude asks you questions, the answers given in the rehearsal are
 shown; yours can differ.
 
@@ -74,7 +77,7 @@ Then:
 decided and its timing ("at planning"). Anything you didn't confirm is
 marked *Proposed:*. *(Things 2, 4)*
 
-## 4. Attack the plan, in a fresh session
+## 4. Attack the plan
 
 > /review-plan
 
@@ -86,11 +89,10 @@ note dated by the wrong day. *(Things 2, 7)*
 
 ## 5. Record the client call, revise, and lock the plan
 
-Back in the drafting session (`claude -c`), paste the review and your
-answers. Anything the client told you goes in a note, so the record can
-cite it:
+The review comes back into your conversation. Answer it. Anything the
+client told you goes in a note, so the record can cite it:
 
-> Here's the review. I had a call with the PI today; save my notes from it
+> I had a call with the PI today; save my notes from it
 > as a new note and cite it in the decisions it supports. *(paste call
 > notes)* Then: no formal testing across time, but say in the plan that a
 > non-significant later time point is not evidence the effect wore off.
@@ -163,7 +165,7 @@ Confirm it:
 **Expect:** every number inline from `results`; any typed number refused
 by the hook. *(Thing 9)*
 
-## 10. Review the analysis, in a fresh session
+## 10. Review the analysis
 
 > /review-analysis
 
@@ -176,7 +178,7 @@ from the file, and several data-dependent sentences were fixed text.
 
 ## 11. Fix, summarise, publish
 
-In the build session (`claude -c`), paste the review:
+Answer the review in the same conversation:
 
 > Fix all of it. Commit the recovery scenario as a test. Add the extended
 > bound for the missing enrolled patient; it was added after results were

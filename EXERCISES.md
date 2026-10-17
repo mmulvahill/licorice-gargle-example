@@ -47,9 +47,10 @@ logistic model's?
 
 ## 6. Get an independent review
 
-Start a **new** Claude Code session and run `/review-analysis`. Compare its
-findings with the review recorded in the research log, and with what you
-would have caught. Why does it have to be a new session?
+Run `/review-analysis`. It runs in a separate subagent that never saw your
+conversation; open its full transcript from `/tasks`. Compare its findings
+with the review recorded in the research log, and with what you would have
+caught. Why shouldn't the session that wrote the work review it?
 
 ## 7. Replay the walkthrough
 

@@ -1,7 +1,9 @@
 ---
 name: review-plan
-description: Adversarial review of the analysis plan before any results exist. Run it in a fresh session, so the reviewer did not write the plan.
+description: Adversarial review of the analysis plan before any results exist. It runs in a separate subagent that never saw the conversation, so the reviewer did not write the plan.
 disable-model-invocation: true
+context: fork
+background: false
 ---
 
 You are reviewing an analysis plan as a skeptical senior biostatistician

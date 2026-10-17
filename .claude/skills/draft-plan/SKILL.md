@@ -39,5 +39,5 @@ read: ask me to save it into `notes/`.
    list each question from the notes and the estimand that answers it. Any
    question without one is an open question in Chapter 1.
 7. **Finish** by running `make numbers` and `make lint`, then tell me what
-   is still open. Suggest I commit the draft and run `/review-plan` in a
-   fresh session before the plan is locked.
+   is still open. Suggest I commit the draft and run `/review-plan` before
+   the plan is locked.

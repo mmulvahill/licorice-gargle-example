@@ -30,9 +30,10 @@ the analyst decides.
 1. **Intake.** The analyst pastes or saves notes in `notes/` and runs
    `/draft-plan`. Together we write the question (Chapter 1) and the plan
    (Chapter 3), logging each decision as it is made.
-2. **Attack the plan.** `/review-plan` in a *fresh* session. Revise, then
-   lock the plan: commit it and tag it (`git tag plan-v1`). The tag is the
-   record that the plan came before the results.
+2. **Attack the plan.** `/review-plan` runs in a separate subagent that
+   never saw this conversation. Revise, then lock the plan: commit it and
+   tag it (`git tag plan-v1`). The tag is the record that the plan came
+   before the results.
 3. **Data.** `/receive-data <file>` records the checksum and checks the
    structure against the plan. Cleaning code in `R/` with known-answer
    tests.
@@ -41,7 +42,7 @@ the analyst decides.
    can fail.
 5. **Results.** Fit everything in `analysis_results()`, then write the
    results chapters from the computed numbers.
-6. **Review.** `/review-analysis` in a *fresh* session. Each fix that
+6. **Review.** `/review-analysis`, in its own subagent. Each fix that
    changes the analysis gets a decision entry with its timing.
 7. **Summary and publish.** `index.qmd` last; push to `main` to publish.
 
