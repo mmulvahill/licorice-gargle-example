@@ -3,22 +3,111 @@
 This chapter is written before any outcome is examined. Changes after that
 point are logged in the decision record with a reason.
 
+## Population and unit of analysis
+
+All randomized patients, analysed in the group they were randomized to
+(intention to treat). Patients with a sore throat before surgery
+(`preOp_pain`) are kept. The unit of analysis is the patient (D-005).
+
+## Outcomes
+
+All outcomes are any sore throat at rest, defined as a score above zero on
+the zero-to-ten scale.
+
+- **Primary:** thirty minutes after PACU arrival (`pacu30min_throatPain`;
+  D-001).
+- **Secondary:** ninety minutes after PACU arrival
+  (`pacu90min_throatPain`), four hours after surgery
+  (`postOp4hour_throatPain`) and the first postoperative morning
+  (`pod1am_throatPain`; D-002).
+
+Cough is not analysed (D-004). Swallowing pain is an open question for the
+client (Chapter 1).
+
 ## Estimands
+
+Every comparison is licorice against sugar water in all randomized
+patients. The odds ratios that answer the client's questions are
+population-averaged (marginal): they compare the odds of sore throat had
+everyone received licorice with the odds had everyone received sugar water
+(D-002). Each odds ratio is reported with the proportion with any sore
+throat in each arm and the risk difference, because the odds ratio
+overstates the relative risk when the outcome is common (D-006).
 
 | Question | Population | Outcome | Summary measure |
 |---|---|---|---|
-| Primary | | | |
-| Secondary | | | |
+| Primary: did it reduce sore throat? | All randomized | Any sore throat at rest, thirty minutes after PACU arrival | Marginal odds ratio; risk difference |
+| Secondary: does it last? | All randomized | The same outcome at each later assessment | Marginal odds ratio and risk difference at each assessment |
+| Summary across time | All randomized | The same outcome at all four assessments | Common marginal odds ratio |
+| Supporting: patient-level effect | All randomized | The same outcome at all four assessments | Common conditional odds ratio (mixed model) |
+| Sensitivity: covariate adjustment | All randomized | Primary outcome | Covariate-conditional odds ratio |
+
+Two of these odds ratios are conditional, and both are reported only
+beside the marginal estimate with a label saying so. The mixed-model odds
+ratio compares the odds for the same patient under licorice and under
+sugar water; it is further from one than the marginal odds ratio whenever
+patients differ in their underlying risk, even with no change in the
+treatment effect (D-008). The adjusted odds ratio compares patients with
+the same covariate values; it differs from the unadjusted one even when
+the arms are perfectly balanced, for the same reason (odds ratios are
+non-collapsible), so a difference is not by itself evidence of
+confounding (D-009).
 
 ## Models
+
+- **Primary and each assessment.** Unadjusted logistic regression of any
+  sore throat on treatment, fitted separately at each assessment with all
+  patients observed at that assessment. With treatment as the only term,
+  its odds ratio is the marginal odds ratio. The risk difference is the
+  difference in observed proportions, with a Wald 95% CI (D-006, D-007).
+- **Common marginal odds ratio.** A generalized estimating equation (GEE)
+  with a logit link, treatment and assessment (as a factor) as terms, an
+  exchangeable working correlation within patient and robust (sandwich)
+  standard errors, fitted with `geepack` (D-007).
+- **Common conditional odds ratio.** A logistic mixed model with the same
+  terms and a random intercept for patient, fitted with `lme4`. Labeled as
+  patient-level in every table and sentence where it appears (D-008).
+- **Adjusted sensitivity analysis.** Logistic regression of the primary
+  outcome on treatment, sex, age, BMI, ASA status, smoking and surgery
+  size, plus preoperative sore throat unless fewer than ten patients have
+  it (counted from baseline data only). Age and BMI enter as linear terms;
+  ASA status, smoking and surgery size as factors. Mallampati class is not
+  included (D-009, D-011).
+
+All CIs are Wald 95% CIs (D-007). Warnings from any fit are reported as
+findings, not suppressed.
+
+## Missing data
+
+There is no variable for "not assessable"; any missing score is treated
+as missing. Each analysis uses the patients observed at that assessment
+(complete case). The GEE and the mixed model use every observed assessment
+for each patient (D-010).
+
+For the primary outcome, best- and worst-case bounds: refit the primary
+model with every missing outcome in the licorice arm set to no sore throat
+and every missing outcome in the sugar-water arm set to sore throat (best
+case for licorice), then the reverse (worst case). If the primary
+conclusion holds at both bounds, the missing patients cannot change it.
+
+The number of patients missing each outcome, by arm, is reported in the
+data chapter. If missingness is more than the client expected, the
+missing-data approach is revisited before any model is fitted, with a
+decision entry (D-012).
 
 ## Verification before trusting a model
 
 Each model function must recover a known effect from simulated data with
 the same structure before it is run on the study data
-(`tests/testthat/test-models.R`).
+(`tests/testthat/test-models.R`). For the GEE and the mixed model, the
+simulation draws correlated repeated outcomes per patient, and each model
+must recover its own estimand: the marginal and the conditional odds
+ratio differ for the same simulated data.
 
 ## Reporting
 
-Effect sizes with 95% CI; p-values to three decimals. State any
-multiplicity adjustment, or why there is none.
+Effect sizes with 95% CI; p-values to three decimals. There is no
+multiplicity adjustment: there is one primary comparison, and the
+secondary analyses are descriptive (D-003). The marginal odds ratios and
+risk differences are the reported effects; conditional odds ratios always
+appear labeled, next to the marginal estimate.
