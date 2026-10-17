@@ -63,8 +63,15 @@ logged in the decision record.
   exclude patients with a sore throat before surgery? This plan keeps them
   (D-005); the PI is checking.
 - [ ] **Enrolled versus analysed.** The enrollment count was uncertain at
-  intake; the codebook gives one. Check it against the number of patients
-  in the delivered file, and ask the client to explain any difference.
-- [ ] **Patients without postoperative data.** The client thought a few
-  patients might have no postoperative data. Check at data receipt
-  (D-012, D-015).
+  intake; the codebook gives one. The delivered file
+  (`data/raw/licorice_gargle.csv`) has fewer rows than the codebook's
+  enrollment count; the counts are in the research log entry for the
+  delivery. Ask the client which patients are missing and why:
+  withdrawal, exclusion after randomization, or a difference between the
+  public and the trial dataset. If a randomized patient is absent, the
+  analysis is not fully intention to treat (D-005).
+- [ ] **Patients without postoperative data.** Checked at data receipt.
+  A small number of patients in the file have no recorded value for any
+  postoperative variable; the count is in the research log. This is under
+  the revisit trigger (D-015). Ask the client why these patients have no
+  postoperative data.

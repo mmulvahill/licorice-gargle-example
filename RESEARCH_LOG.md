@@ -1,3 +1,25 @@
 Append-only. Newest entries at the bottom. What happened, what we learned,
 and what it changed. Short is fine. This is a hand-written log, so its
 numbers are typed; the report chapters compute theirs.
+
+**2026-10-16** First data delivery: `licorice_gargle.csv`, emailed by the
+PI's fellow, the public `medicaldata` version (MD5
+`fe23d586f6bdc92a5db1342f8e41a283`). It has 235 rows and 19 columns,
+matching the codebook names, and every variable the plan uses is present.
+There are no duplicate rows and no patient ID column. Disagreement with
+the notes: the codebook says 236 were enrolled, but the file has 235
+rows. That is now an open question in Chapter 1 (D-019 covers how the
+file is handled).
+
+**2026-10-16** Structure check at receipt. Outcome values were checked
+only for validity and missingness, not summarised. The baseline variables
+and `treat` have no missing values and contain only codebook codes. All
+four planned sore-throat scores are integers from 0 to 10. The same 2
+patients are missing every post-operative variable (all cough and pain
+columns), which confirms the client's "a couple pts no post-op data".
+That is under the 5% revisit trigger in D-015, so complete case plus
+bounds stands. Only 2 patients have a preoperative sore throat, so under
+the pre-specified rule in D-011 it is left out of the adjusted model. All
+other covariate categories in that model have at least 10 patients, so
+D-016 merges nothing. Mallampati class 4 has 1 patient, but Mallampati is
+not in any model.

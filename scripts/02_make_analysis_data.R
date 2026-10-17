@@ -8,8 +8,8 @@
 
 pkgload::load_all(here::here(), quiet = TRUE)
 
-raw_path <- here::here("data", "raw", "RAW_FILE.csv")
-expected_md5 <- "RECORD_MD5_AT_RECEIPT"
+raw_path <- here::here("data", "raw", "licorice_gargle.csv")
+expected_md5 <- "fe23d586f6bdc92a5db1342f8e41a283"
 
 if (!file.exists(raw_path)) {
   stop("No raw data yet: ", raw_path, " does not exist.", call. = FALSE)

@@ -318,3 +318,29 @@ typed; the report chapters compute theirs.
   changes.
 - **Alternatives:** Simulating a time-varying effect and checking the
   weighted-average target; no dedicated test for the bounds.
+
+## D-019: The delivered file is read-only and checksum-guarded
+
+- **Date:** 2026-10-16
+- **Decided by:** Matt Mulvahill (analyst)
+- **Decision:** `data/raw/licorice_gargle.csv`, the first delivery
+  (received 2026-10-16 from the PI's fellow; the public `medicaldata`
+  version), is the analysis's raw data, stored unchanged. Its MD5
+  (`fe23d586f6bdc92a5db1342f8e41a283`) is recorded in
+  `data/raw/README.md` and in `scripts/02_make_analysis_data.R`, which
+  refuses to run if the file changes. Every cleaning step happens in code.
+  A corrected or fuller file is saved as a new file with a new entry here.
+- **Why:** Project rule (CLAUDE.md rule 2). Every result must trace back
+  to bytes that can be shown to be the ones received. The file
+  disagrees with the codebook's enrollment count (Chapter 1, open
+  questions), so a second delivery is plausible and should not silently
+  replace this one. The file is public and contains no identifiable data,
+  so it is kept in `data/raw/` and committed. `data/phi/` is not used.
+- **Timing:** At data receipt, after the plan was locked at `plan-v1`.
+  Only the structure, the baseline codes, the validity of the outcome codes
+  and the outcome missingness had been examined. No outcome distribution
+  or comparison between arms had been seen. Not post hoc, and no change to
+  the plan.
+- **Alternatives:** Asking the client for a corrected file before
+  starting; reading the data straight from the `medicaldata` package
+  (rejected: the package version can change underneath the analysis).

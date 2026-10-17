@@ -1,7 +1,7 @@
 .PHONY: all data results test lint numbers book clean
 
 # Set to the received file when data arrives (and in scripts/02_make_analysis_data.R).
-RAW_DATA = data/raw/RAW_FILE.csv
+RAW_DATA = data/raw/licorice_gargle.csv
 
 all: data results test lint numbers book
 
