@@ -1,0 +1,17 @@
+.Rproj.user/
+.Rhistory
+.RData
+.Rdata
+.Ruserdata
+data/derived/*
+!data/derived/.gitkeep
+data/phi/
+_book/
+/.quarto/
+*_files/
+*_cache/
+renv/library/
+renv/staging/
+.claude/settings.local.json
+
+**/*.quarto_ipynb

@@ -1,0 +1,24 @@
+# Analysis plan
+
+This chapter is written before any outcome is examined. Changes after that
+point are logged in the decision record with a reason.
+
+## Estimands
+
+| Question | Population | Outcome | Summary measure |
+|---|---|---|---|
+| Primary | | | |
+| Secondary | | | |
+
+## Models
+
+## Verification before trusting a model
+
+Each model function must recover a known effect from simulated data with
+the same structure before it is run on the study data
+(`tests/testthat/test-models.R`).
+
+## Reporting
+
+Effect sizes with 95% CI; p-values to three decimals. State any
+multiplicity adjustment, or why there is none.

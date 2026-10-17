@@ -1,0 +1,3 @@
+# Research log
+
+{{< include ../RESEARCH_LOG.md >}}

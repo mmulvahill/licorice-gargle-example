@@ -1,0 +1,25 @@
+# Reproducing this report
+
+From a fresh clone:
+
+```bash
+make all   # data -> models -> tests -> lint -> prose-number check -> render
+```
+
+The rendered book is published by `.github/workflows/publish.yml` on every
+push to `main`, so the public version always matches the committed code.
+
+## Package versions
+
+`sessionInfo()` below records what was used; it does not let anyone get the
+same versions back. For that, pin packages with `renv`: run
+`renv::init()` once, commit `renv.lock`, and collaborators run
+`renv::restore()`. (Pinning is left as a first step for your own project,
+because a lockfile should be created on the machine that does the work.)
+
+## Software environment at render time
+
+```{r}
+#| code-fold: false
+sessionInfo()
+```

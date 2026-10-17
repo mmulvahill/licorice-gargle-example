@@ -1,0 +1,2 @@
+# Raw data must stay byte-identical on every OS, or its checksum breaks.
+data/raw/** -text

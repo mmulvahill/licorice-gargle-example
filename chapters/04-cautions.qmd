@@ -1,0 +1,9 @@
+# Cautions
+
+Things that could make a correct-looking analysis wrong. Read before
+interpreting results.
+
+- **Covariate imbalance after randomization is chance.** Do not choose
+  adjustment covariates by looking at Table 1.
+- **"Cleaned" data is a claim, not a guarantee.** The pipeline validates
+  every range and code regardless of what the source says.

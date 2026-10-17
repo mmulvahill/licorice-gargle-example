@@ -1,0 +1,21 @@
+# The question
+
+## What the client asked
+
+> The client's question, in their words.
+
+## How we restated it
+
+- **Primary question.** Population, intervention or exposure, comparison,
+  outcome, and when it is measured.
+- **Secondary questions.**
+
+Confirm each restatement with the client before analysis begins and log it
+in the decision record.
+
+## Open questions
+
+Questions we could not answer from the data alone. Each is resolved here or
+logged in the decision record.
+
+- [ ]

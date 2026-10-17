@@ -1,0 +1,27 @@
+# Summary {.unnumbered}
+
+```{r}
+#| include: false
+source(here::here("chapters", "_setup.R"))
+```
+
+```{r}
+#| echo: false
+#| results: asis
+if (!has_data) {
+  cat("::: {.callout-note}\n## Awaiting data\n",
+      "No data has been received yet. This book holds the plan only.\n:::\n")
+}
+```
+
+**Question.** The client's question, once confirmed (Chapter 1).
+
+**Answer.** Written last, from computed results only.
+
+**How to read this book.** It is both the lab notebook and the report. The
+*Plan* part is written before the results; the *Results* part follows it;
+the *Record* part holds every analysis decision and the research log. Every
+number in the Plan and Results prose is computed from the data when the book
+renders, so the text cannot drift from the analysis; `make numbers` checks
+this. The decision record and research log are hand-written logs, and say
+so.

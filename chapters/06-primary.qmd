@@ -1,0 +1,12 @@
+# Primary analysis
+
+```{r}
+#| include: false
+source(here::here("chapters", "_setup.R"))
+```
+
+Start with the simplest version of the answer, then the pre-specified
+primary model from Chapter 3. Estimates come from `results` (fitted once
+by `make results`); write this prose only after they are computed. End with
+`fit_warnings_note(results, c(...))` in a `results: asis` chunk so the
+chapter says whether its models raised warnings.

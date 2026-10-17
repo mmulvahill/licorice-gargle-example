@@ -1,0 +1,21 @@
+Package: analysis
+Title: Project Functions for a Reproducible Analysis
+Version: 0.1.0
+Authors@R: person("Matt", "Mulvahill", role = c("aut", "cre"))
+Description: Project functions for a reproducible statistical consulting
+    analysis. Rename this package for your own project; it exists so that
+    every function the report uses has tests and one home.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Depends: R (>= 4.1)
+Imports:
+    stats
+Suggests:
+    ggplot2,
+    here,
+    knitr,
+    lintr,
+    pkgload,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

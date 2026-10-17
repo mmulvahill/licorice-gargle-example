@@ -1,0 +1,8 @@
+# Baseline characteristics
+
+```{r}
+#| include: false
+source(here::here("chapters", "_setup.R"))
+```
+
+Describe the sample, then a Table 1 from `table_one()`.

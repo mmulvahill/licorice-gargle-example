@@ -1,0 +1,26 @@
+# Data and lineage
+
+```{r}
+#| include: false
+source(here::here("chapters", "_setup.R"))
+```
+
+## Source
+
+Where the raw data came from, when it was received, and its checksum (see
+`data/raw/README.md`). The raw file is never edited;
+`scripts/02_make_analysis_data.R` refuses to run if its bytes change.
+
+## Lineage
+
+Each step is a function in `R/` with tests in `tests/testthat/`.
+
+```{r}
+#| echo: false
+#| eval: !expr has_data
+knitr::kable(lineage, col.names = c("Step", "Rows", "File"))
+```
+
+## Missing data
+
+How much is missing, where, and how it is handled (with a decision entry).
