@@ -3,10 +3,10 @@ project:
   output-dir: _book
 
 book:
-  title: "Study Title: Analysis Notebook and Report"
+  title: "Licorice Gargle Trial: Analysis Notebook and Report"
   author: "Matt Mulvahill"
   date: today
-  repo-url: https://github.com/mmulvahill/reproducible-analysis-starter
+  repo-url: https://github.com/mmulvahill/licorice-gargle-example
   repo-actions: [source, issue]
   chapters:
     - index.qmd

@@ -1,10 +1,10 @@
-Package: analysis
-Title: Project Functions for a Reproducible Analysis
+Package: licorice
+Title: Project Functions for the Licorice Gargle Trial Analysis
 Version: 0.1.0
 Authors@R: person("Matt", "Mulvahill", role = c("aut", "cre"))
-Description: Project functions for a reproducible statistical consulting
-    analysis. Rename this package for your own project; it exists so that
-    every function the report uses has tests and one home.
+Description: Project functions for a reproducible analysis of the licorice
+    gargle trial. The package exists so that every function the report uses
+    has tests and one home.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Depends: R (>= 4.1)
