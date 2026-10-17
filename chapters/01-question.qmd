@@ -5,7 +5,9 @@
 The PI, an anesthesiologist, and their fellow ran a randomized trial of a
 licorice gargle against a sugar-water gargle, given shortly before
 induction of anesthesia in thoracic surgery with a double-lumen tube. At
-the intake meeting (`notes/2026-10-16-intake-meeting.md`) the PI asked:
+the intake meeting on the tenth of October
+(`notes/2026-10-16-intake-meeting.md`; see
+`notes/2026-10-16-intake-date-correction.md` for the date) the PI asked:
 
 > "did it reduce sore throat afterwards?"
 
@@ -16,25 +18,33 @@ and also:
 The intake notes record that they care a lot about the second question and
 expect reviewers to ask it. The results are intended for a manuscript.
 
+On a follow-up call (`notes/2026-10-16-pi-call.md`) the PI confirmed the
+primary outcome and chose "any" sore throat over a higher threshold:
+
+> "any is what patients notice"
+
 ## How we restated it
 
-- **Primary question.** In adults having thoracic surgery with a
+- **Primary question.** In patients having thoracic surgery with a
   double-lumen tube, does a licorice gargle five minutes before induction,
   compared with a sugar-water gargle, lower the odds of any sore throat at
   rest thirty minutes after arrival in the recovery room (PACU)? "Any"
   means a score above zero on the zero-to-ten sore-throat-at-rest scale
-  (`pacu30min_throatPain`). The PI confirmed this as the primary outcome
-  (D-001).
+  (`pacu30min_throatPain`). The PI confirmed this as the primary outcome,
+  with no higher threshold, on the follow-up call (D-001).
 - **Secondary question: does it last?** The population-averaged odds ratio
-  for any sore throat at rest at each later assessment: ninety minutes
-  after PACU arrival (`pacu90min_throatPain`), four hours after surgery
-  (`postOp4hour_throatPain`) and the first postoperative morning
-  (`pod1am_throatPain`). One common odds ratio across all four
-  assessments is reported as a summary. These analyses are descriptive;
-  there is no formal test of whether the effect changes over time (D-002,
-  D-003).
+  and risk difference for any sore throat at rest at each later
+  assessment: ninety minutes after PACU arrival (`pacu90min_throatPain`),
+  four hours after surgery (`postOp4hour_throatPain`) and the first
+  postoperative morning (`pod1am_throatPain`). Durability is judged from
+  these per-time estimates and their confidence intervals. They are
+  descriptive, with no formal test, and a non-significant later
+  assessment is not evidence that the effect wore off (D-002, D-003,
+  D-013). A common odds ratio across all four assessments is reported as
+  a summary, but it assumes one common effect and does not answer this
+  question (D-014).
 - **Not analysed.** Cough, at extubation and at each assessment. The PI
-  said it is not of interest (D-004).
+  said on the follow-up call that they are not interested in it (D-004).
 
 ## Open questions
 
@@ -42,13 +52,19 @@ Questions we could not answer from the data alone. Each is resolved here or
 logged in the decision record.
 
 - [ ] **Swallowing pain.** Should sore throat on swallowing
-  (`pacu30min_swallowPain`, recorded at thirty minutes only)
-  be a secondary outcome? To ask the client.
+  (`pacu30min_swallowPain`, recorded at thirty minutes only) be a
+  secondary outcome? The PI's answer on the follow-up call: "maybe, let me
+  think".
+- [ ] **Stratified randomization.** Was randomization stratified? The PI
+  does not remember and will check the protocol. If it was, whether the
+  strata belong in the adjusted model is a decision to make before any
+  outcome is examined.
+- [ ] **Preoperative sore throat in the protocol.** Did the trial protocol
+  exclude patients with a sore throat before surgery? This plan keeps them
+  (D-005); the PI is checking.
 - [ ] **Enrolled versus analysed.** The enrollment count was uncertain at
   intake; the codebook gives one. Check it against the number of patients
   in the delivered file, and ask the client to explain any difference.
 - [ ] **Patients without postoperative data.** The client thought a few
-  patients might have no postoperative data. Check at data receipt.
-- [ ] **Preoperative sore throat in the protocol.** Did the trial protocol
-  exclude patients with a sore throat before surgery? This plan keeps them
-  (D-005); ask the client.
+  patients might have no postoperative data. Check at data receipt
+  (D-012, D-015).

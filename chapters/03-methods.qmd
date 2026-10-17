@@ -1,7 +1,8 @@
 # Analysis plan
 
 This chapter is written before any outcome is examined. Changes after that
-point are logged in the decision record with a reason.
+point are logged in the decision record with a reason. It was revised
+after plan review, before any data were seen (D-013 to D-017).
 
 ## Population and unit of analysis
 
@@ -27,7 +28,9 @@ client (Chapter 1).
 ## Estimands
 
 Every comparison is licorice against sugar water in all randomized
-patients. The odds ratios that answer the client's questions are
+patients; because the analyses are complete case, this holds only if
+missing outcomes are missing completely at random (see Missing data). The
+odds ratios that answer the client's questions are
 population-averaged (marginal): they compare the odds of sore throat had
 everyone received licorice with the odds had everyone received sugar water
 (D-002). Each odds ratio is reported with the proportion with any sore
@@ -38,7 +41,7 @@ overstates the relative risk when the outcome is common (D-006).
 |---|---|---|---|
 | Primary: did it reduce sore throat? | All randomized | Any sore throat at rest, thirty minutes after PACU arrival | Marginal odds ratio; risk difference |
 | Secondary: does it last? | All randomized | The same outcome at each later assessment | Marginal odds ratio and risk difference at each assessment |
-| Summary across time | All randomized | The same outcome at all four assessments | Common marginal odds ratio |
+| Summary across time (does not answer "does it last") | All randomized | The same outcome at all four assessments | Common marginal odds ratio, assuming one common effect |
 | Supporting: patient-level effect | All randomized | The same outcome at all four assessments | Common conditional odds ratio (mixed model) |
 | Sensitivity: covariate adjustment | All randomized | Primary outcome | Covariate-conditional odds ratio |
 
@@ -53,6 +56,20 @@ the arms are perfectly balanced, for the same reason (odds ratios are
 non-collapsible), so a difference is not by itself evidence of
 confounding (D-009).
 
+**Does it last?** Durability is judged from the per-time odds ratios,
+risk differences and their 95% CIs, read together. There is no formal
+test across time points. A non-significant result at a later assessment
+is not evidence that the effect wore off: it means the data cannot rule
+out no effect at that time, and the CI shows which effects remain
+plausible (D-003, D-013).
+
+**The common odds ratio** assumes one treatment effect shared by all four
+assessments, including the primary one at thirty minutes. If the effect
+changes over time, it is a weighted average that leans toward the early,
+better-observed assessments. It is a summary only and does not answer
+"does it last"; the per-time estimates do. The same holds for the
+mixed-model common odds ratio (D-014).
+
 ## Models
 
 - **Primary and each assessment.** Unadjusted logistic regression of any
@@ -63,7 +80,9 @@ confounding (D-009).
 - **Common marginal odds ratio.** A generalized estimating equation (GEE)
   with a logit link, treatment and assessment (as a factor) as terms, an
   exchangeable working correlation within patient and robust (sandwich)
-  standard errors, fitted with `geepack` (D-007).
+  standard errors, fitted with `geepack` (D-007). There is no
+  treatment-by-assessment term, so the model assumes one common effect
+  (D-014).
 - **Common conditional odds ratio.** A logistic mixed model with the same
   terms and a random intercept for patient, fitted with `lme4`. Labeled as
   patient-level in every table and sentence where it appears (D-008).
@@ -71,8 +90,12 @@ confounding (D-009).
   outcome on treatment, sex, age, BMI, ASA status, smoking and surgery
   size, plus preoperative sore throat unless fewer than ten patients have
   it (counted from baseline data only). Age and BMI enter as linear terms;
-  ASA status, smoking and surgery size as factors. Mallampati class is not
-  included (D-009, D-011).
+  ASA status, smoking and surgery size as factors. Any covariate category
+  with fewer than ten patients is merged into its neighbour, decided from
+  baseline counts only. Mallampati class is not included: it acts through
+  intubation difficulty, which is not measured, and leaving it out keeps
+  the model small. The adjusted odds ratio is conditional on the
+  covariates (D-009, D-011, D-016).
 
 All CIs are Wald 95% CIs (D-007). Warnings from any fit are reported as
 findings, not suppressed.
@@ -82,7 +105,8 @@ findings, not suppressed.
 There is no variable for "not assessable"; any missing score is treated
 as missing. Each analysis uses the patients observed at that assessment
 (complete case). The GEE and the mixed model use every observed assessment
-for each patient (D-010).
+for each patient (D-010). The complete-case analyses assume outcomes are
+missing completely at random (MCAR) (D-015).
 
 For the primary outcome, best- and worst-case bounds: refit the primary
 model with every missing outcome in the licorice arm set to no sore throat
@@ -90,10 +114,12 @@ and every missing outcome in the sugar-water arm set to sore throat (best
 case for licorice), then the reverse (worst case). If the primary
 conclusion holds at both bounds, the missing patients cannot change it.
 
+Bounds are computed for the primary outcome only (D-010, D-015).
+
 The number of patients missing each outcome, by arm, is reported in the
-data chapter. If missingness is more than the client expected, the
-missing-data approach is revisited before any model is fitted, with a
-decision entry (D-012).
+data chapter (D-012). If more than five percent of patients are missing
+the outcome at any assessment, the missing-data approach is revisited
+before any model is fitted, with a decision entry (D-015).
 
 ## Verification before trusting a model
 
@@ -102,7 +128,12 @@ the same structure before it is run on the study data
 (`tests/testthat/test-models.R`). For the GEE and the mixed model, the
 simulation draws correlated repeated outcomes per patient, and each model
 must recover its own estimand: the marginal and the conditional odds
-ratio differ for the same simulated data.
+ratio differ for the same simulated data. When outcomes are simulated
+from a random-intercept model, the true marginal odds ratio is not a model
+parameter; it is computed by numerical integration over the
+random-intercept distribution (D-017).
+
+The risk-difference Wald CI gets a known-answer test (D-017).
 
 ## Reporting
 

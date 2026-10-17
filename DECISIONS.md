@@ -9,16 +9,19 @@ typed; the report chapters compute theirs.
 ## D-001: Primary outcome is any sore throat at rest at PACU 30 min
 
 - **Date:** 2026-10-16
-- **Decided by:** PI (confirmed at the intake meeting; reported by Matt
-  Mulvahill)
+- **Decided by:** PI, confirmed on a call with Matt Mulvahill on
+  2026-10-16 (`notes/2026-10-16-pi-call.md`). The intake meeting on
+  2026-10-10 left the definition open.
 - **Decision:** The primary outcome is any sore throat at rest 30 minutes
   after PACU arrival, defined as `pacu30min_throatPain` > 0 on the 0-10
   scale.
 - **Why:** It is the PI's primary question ("did it reduce sore throat
-  afterwards?"), and the PI confirmed any sore throat as the primary
-  outcome. "Any" means a score above 0.
+  afterwards?"). On the call the PI chose "any" (score > 0) with no
+  higher threshold: "any is what patients notice".
 - **Timing:** At planning, before any outcome was examined. The data file
   has not been opened.
+- **Record updated:** 2026-10-16, after plan review, to cite the call note
+  and correct the attribution; the decision itself is unchanged.
 - **Alternatives:** A higher threshold on the 0-10 score (raised at intake;
   not chosen); the 0-10 score itself, analysed as ordinal (deferred; see
   the intake notes).
@@ -27,7 +30,8 @@ typed; the report chapters compute theirs.
 
 - **Date:** 2026-10-16
 - **Decided by:** Matt Mulvahill (analyst); the PI agreed to the
-  population-averaged estimand on a call on 2026-10-16
+  population-averaged (population-level) odds ratio on a call on
+  2026-10-16 (`notes/2026-10-16-pi-call.md`)
 - **Decision:** Secondary outcomes are any sore throat at rest (score > 0)
   at PACU 90 min, 4 h after surgery and the first postoperative morning.
   "Does it last past the recovery room?" is answered by a separate
@@ -40,6 +44,9 @@ typed; the report chapters compute theirs.
 - **Timing:** At planning, before any outcome was examined.
 - **Alternatives:** A formal treatment-by-time interaction test (not
   chosen); later time points only, without a summary.
+- **Record updated:** 2026-10-16, after plan review, to cite the call
+  note; the decision itself is unchanged. See D-013 and D-014 for how the
+  per-time and common odds ratios are interpreted.
 
 ## D-003: No multiplicity adjustment
 
@@ -55,12 +62,15 @@ typed; the report chapters compute theirs.
 ## D-004: Cough is not analysed
 
 - **Date:** 2026-10-16
-- **Decided by:** PI
+- **Decided by:** PI, on a call on 2026-10-16
+  (`notes/2026-10-16-pi-call.md`)
 - **Decision:** Cough (at extubation and at each postoperative assessment)
   is not an outcome of this analysis.
-- **Why:** The PI said cough is not of interest.
+- **Why:** The call note records "cough: not interested, drop it".
 - **Timing:** At planning, before any outcome was examined.
 - **Alternatives:** Cough as a secondary outcome.
+- **Record updated:** 2026-10-16, after plan review, to cite the call
+  note; the decision itself is unchanged.
 
 ## D-005: Intention to treat, patient as unit, keep preoperative sore throat
 
@@ -95,7 +105,10 @@ typed; the report chapters compute theirs.
 ## D-007: Models for the primary, per-assessment and common odds ratios
 
 - **Date:** 2026-10-16
-- **Decided by:** Matt Mulvahill (analyst)
+- **Decided by:** Matt Mulvahill (analyst). The PI agreed to unadjusted
+  logistic regression at 30 minutes as the primary model on a call on
+  2026-10-16 (`notes/2026-10-16-pi-call.md`); the remaining models are the
+  analyst's call.
 - **Decision:** The primary odds ratio and the odds ratio at each later
   assessment come from separate unadjusted logistic regressions of any sore
   throat on treatment, one per assessment. The common odds ratio comes from
@@ -111,6 +124,9 @@ typed; the report chapters compute theirs.
 - **Alternatives:** One GEE with a treatment-by-assessment interaction for
   the per-assessment odds ratios; independence working correlation;
   profile-likelihood CIs.
+- **Record updated:** 2026-10-16, after plan review, to cite the call note
+  for the PI's agreement to the primary model; the decision itself is
+  unchanged.
 
 ## D-008: Also fit a random-intercept mixed model, labeled conditional
 
@@ -195,3 +211,92 @@ typed; the report chapters compute theirs.
 - **Timing:** At planning, before any outcome was examined.
 - **Alternatives:** Proceed with complete case regardless of the amount
   missing.
+
+## D-013: Durability is judged from per-time estimates, without testing
+
+- **Date:** 2026-10-16
+- **Decided by:** PI (per-time results descriptive); Matt Mulvahill
+  (analyst; interpretation rule)
+- **Decision:** No formal testing across time points; D-003 stands.
+  Whether the effect lasts is judged from the per-time odds ratios, risk
+  differences and their 95% CIs. A non-significant result at a later time
+  point is not evidence that the effect wore off.
+- **Why:** The PI wants the per-time results descriptive. The plan review
+  pointed out that, without a stated interpretation, a null result on the
+  first postoperative morning would be read as the effect wearing off,
+  when it is only absence of evidence.
+- **Timing:** At planning, after plan review, before any data were seen.
+- **Alternatives:** Fixed-sequence testing (30 min, 90 min, 4 h, POD1,
+  stopping at the first non-significant result), proposed in the plan
+  review.
+
+## D-014: The common odds ratio assumes one common effect
+
+- **Date:** 2026-10-16
+- **Decided by:** Matt Mulvahill (analyst)
+- **Decision:** Keep the exchangeable GEE common odds ratio (D-007) as a
+  summary across all four time points, including 30 minutes. The plan
+  states that it assumes one effect common to all time points and does not
+  answer "does it last"; the per-time estimates do. The same applies to the
+  mixed-model common odds ratio (D-008).
+- **Why:** The plan review noted that if the effect changes over time the
+  model is misspecified and the summary is a weighted average that leans
+  toward the early, better-observed time points, so it could be quoted as
+  a lasting effect.
+- **Timing:** At planning, after plan review, before any data were seen.
+- **Alternatives:** Drop the common odds ratio; an independence working
+  correlation with stated weights; excluding 30 minutes from the summary.
+
+## D-015: Missing data: MCAR assumption and a numeric revisit trigger
+
+- **Date:** 2026-10-16
+- **Decided by:** Matt Mulvahill (analyst)
+- **Decision:** Supersedes the trigger in D-012. The complete-case analyses
+  assume outcomes are missing completely at random (MCAR). If more than 5%
+  of patients are missing the outcome at any time point, the missing-data
+  approach is revisited before any model is fitted, with a decision entry.
+  Best- and worst-case bounds remain on the primary outcome only (D-010).
+  Missingness by arm is still reported (D-012).
+- **Why:** Complete case targets all randomized patients only under MCAR,
+  so the assumption is stated. The review noted that "more than the
+  client expected" left the trigger to be set after missingness was seen;
+  a number fixes it in advance.
+- **Timing:** At planning, after plan review, before any data were seen.
+- **Alternatives:** A trigger on the between-arm difference in
+  missingness; bounds at later time points too; naming a fallback such as
+  multiple imputation now.
+
+## D-016: Sparse covariate categories merged; Mallampati reason restated
+
+- **Date:** 2026-10-16
+- **Decided by:** Matt Mulvahill (analyst)
+- **Decision:** Adds to D-009 and D-011. In the adjusted model, any
+  covariate category with fewer than 10 patients is merged into its
+  neighbour, decided from baseline counts only. The adjusted odds ratio
+  stays conditional. The reason for leaving out Mallampati class is
+  restated: it acts through intubation difficulty, which is not measured,
+  and leaving it out keeps the model small.
+- **Why:** The review noted roughly 11 parameters with no rule for sparse
+  categories, risking separation and unstable estimates. The original
+  Mallampati reason ("predicts a difficult intubation rather than sore
+  throat") was argued backwards, since difficult intubation plausibly
+  causes sore throat.
+- **Timing:** At planning, after plan review, before any data were seen.
+- **Alternatives:** Standardization (g-computation) to a covariate-adjusted
+  marginal odds ratio, proposed again in the review (not chosen); including
+  Mallampati class.
+
+## D-017: Verification additions
+
+- **Date:** 2026-10-16
+- **Decided by:** Matt Mulvahill (analyst)
+- **Decision:** When data are simulated from a random-intercept model, the
+  true marginal odds ratio for the recovery tests is computed by numerical
+  integration over the random-intercept distribution. The Wald CI for the
+  risk difference gets a known-answer test. Wald CIs for the risk
+  difference are kept.
+- **Why:** The marginal truth is not a model parameter, so the GEE recovery
+  test needs it computed. Every calculation in the report needs a test.
+- **Timing:** At planning, after plan review, before any data were seen.
+- **Alternatives:** Newcombe intervals for the risk difference, suggested
+  in the review for proportions near 0 or 1.
