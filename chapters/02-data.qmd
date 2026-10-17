@@ -11,7 +11,7 @@ The data are one file, `licorice_gargle.csv`, emailed by the PI's fellow.
 It is the public version of the trial data from the `medicaldata` R
 package, with one row per patient. The codebook is
 `notes/2026-10-16-codebook.md`. The file's date of receipt and its MD5
-checksum are in `data/raw/README.md`. The raw file is never edited, and
+checksum are in `data/README.md`. The raw file is never edited, and
 `scripts/02_make_analysis_data.R` refuses to run if its bytes change
 (D-019).
 

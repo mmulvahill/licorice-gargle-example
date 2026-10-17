@@ -8,8 +8,10 @@ Draft `chapters/01-question.qmd` and `chapters/03-methods.qmd` with me from
 these notes: $ARGUMENTS
 
 If the notes were pasted rather than given as a file, first save them
-unchanged as `notes/YYYY-MM-DD-<topic>.md` (today's date). Files in
-`notes/` are never edited afterwards.
+unchanged as `notes/YYYY-MM-DD-<topic>.md`, dated by the meeting, not by
+today (ask if the notes don't say). Files in `notes/` are never edited
+afterwards. A codebook or protocol outside the project folder can't be
+read: ask me to save it into `notes/`.
 
 1. **Read first.** Read the notes, `CLAUDE.md`, both chapters, and
    `DECISIONS.md`. If a data dictionary or codebook is available, read it.
@@ -30,7 +32,9 @@ unchanged as `notes/YYYY-MM-DD-<topic>.md` (today's date). Files in
 5. **Log decisions as they are made.** When I confirm a choice about an
    outcome, model, estimand, covariates, exclusions or missing data, write
    it with `/log-decision` (Timing: at planning, before any outcome was
-   examined). Ask me who decided if I have not said.
+   examined). Ask me who decided if I have not said. If I say the client
+   or PI decided something that isn't in `notes/`, ask me to add a note of
+   that conversation, so the record can cite it.
 6. **Every client question gets an answer in the plan.** Before finishing,
    list each question from the notes and the estimand that answers it. Any
    question without one is an open question in Chapter 1.

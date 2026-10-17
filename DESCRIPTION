@@ -16,6 +16,7 @@ Imports:
 Suggests:
     ggplot2,
     here,
+    jsonlite,
     knitr,
     lintr,
     pkgload,

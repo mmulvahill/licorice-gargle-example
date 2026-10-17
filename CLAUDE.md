@@ -11,6 +11,7 @@ and the client report.
 
 ```
 data/raw/        received data. READ-ONLY. Never edit, never overwrite.
+data/README.md   where each delivery came from, with its checksum
 data/derived/    built by `make data` and `make results`. Not committed.
 R/               every function the analysis uses (an R package)
 tests/testthat/  tests for those functions
@@ -60,7 +61,8 @@ make all       # everything above, in order
 
 1. **Never type a number into report prose.** Every number in a `.qmd`
    comes from inline R, e.g. `` `r fmt_pct(x)` ``. `make numbers` enforces
-   this, and a hook runs it after every edit. Never get past the check by
+   this, and a hook runs it after every edit. Design facts in plan prose
+   go in words ("thirty minutes", "a zero-to-ten scale"). Never get past the check by
    marking a line `numbers-ok` or by wrapping a typed literal in inline R;
    compute the number, or ask.
 2. **Raw data is read-only.** All changes happen in code, from raw to

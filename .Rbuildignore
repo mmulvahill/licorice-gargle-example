@@ -16,3 +16,5 @@
 ^\.pre-commit-config\.yaml$
 ^Makefile$
 ^run_all\.R$
+^WALKTHROUGH\.md$
+^notes$

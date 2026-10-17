@@ -3,8 +3,10 @@
 # that a locked plan (a plan-* git tag) changes only with a decision entry.
 # Reads the hook's JSON on stdin; exit 2 shows the message to Claude.
 
-input=$(cat)
-if ! grep -qE 'chapters/0(1-question|3-methods)\.qmd' <<<"$input"; then
+# Only the edited file's path counts, not paths mentioned in its content.
+file=$(Rscript -e 'cat(jsonlite::fromJSON(file("stdin"))$tool_input$file_path)' \
+  2>/dev/null)
+if ! grep -qE 'chapters/0(1-question|3-methods)\.qmd$' <<<"$file"; then
   exit 0
 fi
 tag=$(git tag -l 'plan-*' --sort=-creatordate | head -n 1)

@@ -4,7 +4,7 @@
 # differ from the checksum recorded when it was received.
 #
 # When data arrives: set raw_path (and RAW_DATA in the Makefile), record the
-# MD5 below and in data/raw/README.md, and write the cleaning function in R/.
+# MD5 below and in data/README.md.
 
 pkgload::load_all(here::here(), quiet = TRUE)
 

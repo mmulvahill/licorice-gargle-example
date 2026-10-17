@@ -26,7 +26,7 @@ repos:
         name: raw data is read-only (new files are fine; edits are not)
         entry: >-
           bash -c 'changed=$(git diff --cached --name-only --diff-filter=MDR
-          -- data/raw ":!data/raw/README.md");
+          -- data/raw);
           if [ -n "$changed" ]; then echo "Raw data may not be modified:";
           echo "$changed"; exit 1; fi'
         language: system
