@@ -344,3 +344,25 @@ typed; the report chapters compute theirs.
 - **Alternatives:** Asking the client for a corrected file before
   starting; reading the data straight from the `medicaldata` package
   (rejected: the package version can change underneath the analysis).
+
+## D-020: Mixed model fitted by adaptive quadrature (9 points)
+
+- **Date:** 2026-10-16
+- **Decided by:** *Proposed* by Claude; awaiting confirmation from Matt
+  Mulvahill (analyst).
+- **Decision:** *Proposed:* the random-intercept mixed model (D-008) is
+  fitted with `lme4::glmer(nAGQ = 9)`, adaptive Gauss-Hermite quadrature
+  with 9 points, instead of the default Laplace approximation (`nAGQ = 1`).
+  The estimand, terms and software are unchanged.
+- **Why:** With four binary outcomes per patient, Laplace underestimated
+  the patient SD in simulation (1.40 against a true 1.5, from 20,000
+  simulated patients). On a simulated trial of the real size it also gave
+  a convergence warning (max|grad| 0.08); 9-point quadrature fitted the
+  same data without one. Quadrature is exact enough for a single scalar
+  random intercept and costs about a quarter of a second per fit.
+- **Timing:** After the plan was locked at `plan-v1`, while writing the
+  model functions, from simulated data only. No model had been fitted to
+  the trial data, and no outcome distribution or arm comparison had been
+  seen. Not post hoc. Changes the fitting method only, not the plan.
+- **Alternatives:** Laplace (the `lme4` default); more quadrature points;
+  a different package (`GLMMadaptive`).

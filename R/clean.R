@@ -143,6 +143,21 @@ fmt_rows <- function(rows, max_shown = 10) {
   paste0(if (length(rows) == 1) "row " else "rows ", shown, more)
 }
 
+#' The four sore-throat-at-rest assessments, in time order
+#'
+#' Names are the clean columns; values are the labels used in the report.
+assessment_labels <- function() {
+  c(
+    throat_pain_pacu30 = "PACU 30 min",
+    throat_pain_pacu90 = "PACU 90 min",
+    throat_pain_4h = "4 h after surgery",
+    throat_pain_pod1 = "First postoperative morning"
+  )
+}
+
+#' Any sore throat: a score above zero on the 0 to 10 scale (D-001)
+any_sore_throat <- function(score) as.integer(score > 0)
+
 #' One row per patient per assessment of sore throat at rest
 #'
 #' Missing assessments stay as rows with a missing outcome, so missingness
@@ -154,12 +169,7 @@ fmt_rows <- function(rows, max_shown = 10) {
 #'   time order), `throat_pain` (0 to 10) and `sore_throat` (1 if the score
 #'   is above zero, D-001).
 assessments_long <- function(clean) {
-  assessments <- c(
-    throat_pain_pacu30 = "PACU 30 min",
-    throat_pain_pacu90 = "PACU 90 min",
-    throat_pain_4h = "4 h after surgery",
-    throat_pain_pod1 = "First postoperative morning"
-  )
+  assessments <- assessment_labels()
   long <- do.call(rbind, lapply(names(assessments), function(col) {
     data.frame(
       patient_id = clean$patient_id,
@@ -169,7 +179,7 @@ assessments_long <- function(clean) {
     )
   }))
   long$assessment <- factor(long$assessment, levels = unname(assessments))
-  long$sore_throat <- as.integer(long$throat_pain > 0)
+  long$sore_throat <- any_sore_throat(long$throat_pain)
   long <- long[order(long$patient_id, long$assessment), ]
   rownames(long) <- NULL
   long

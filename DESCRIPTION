@@ -9,7 +9,10 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Depends: R (>= 4.1)
 Imports:
-    stats
+    geepack,
+    lme4,
+    stats,
+    utils
 Suggests:
     ggplot2,
     here,

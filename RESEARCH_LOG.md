@@ -34,3 +34,25 @@ long table). Two choices the codebook does not settle: `patient_id` is the
 raw row number, since the file has no identifier, and age and BMI get
 only wide plausibility bounds (age 0 to 120, BMI 10 to 80), because the
 codebook gives no range for them.
+
+**2026-10-17** Model functions written in `R/models.R`: per-assessment
+logistic regression with risk difference, exchangeable GEE, random-intercept
+mixed model, adjusted model with sparse-level merging, and missing-outcome
+bounds. The simulator is in `R/simulate.R`, and nothing has been fitted to
+the trial data. Each recovery test uses 200 simulated trials of 235
+patients, 2 of them without post-operative data. The marginal truths
+(per-assessment OR and RD, the GEE's common OR, and the within-patient
+correlation) come from integration over the random intercept. The GEE
+scenario solves for the licorice intercepts that make the marginal OR
+constant (D-018). Two findings:
+
+- Laplace fitting of the mixed model underestimated the patient SD and
+  gave a convergence warning on a simulated trial, so the mixed model uses
+  9-point quadrature (D-020, proposed).
+- 13 deliberate breaks were tried. 12 failed tests at once. The
+  independence-GEE break passed every test, because an independence GEE
+  gives the same OR and valid sandwich CIs. The GEE now reports its working
+  correlation, and the test compares that with the integrated truth.
+- 90% CIs were caught only by the GEE and adjusted-model coverage checks,
+  so `odds_ratio()` now has an exact CI check.
+- After both changes, all 13 breaks fail at least one test.
