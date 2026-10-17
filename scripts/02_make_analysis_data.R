@@ -25,16 +25,25 @@ if (!identical(actual_md5, expected_md5)) {
 }
 
 raw <- utils::read.csv(raw_path)
-clean <- raw # Replace with the project's cleaning function from R/clean.R.
+# Stops, naming columns and rows, if the data disagree with the codebook
+clean <- clean_raw(raw)
+# Built here only to count its rows; analysis_results() rebuilds it from clean
+long <- assessments_long(clean)
 
 dir.create(here::here("data", "derived"), showWarnings = FALSE)
 saveRDS(clean, here::here("data", "derived", "clean.rds"))
 
 lineage <- data.frame(
-  step = c("raw", "clean"),
-  rows = c(nrow(raw), nrow(clean)),
-  file = c(file.path("data", "raw", basename(raw_path)), "data/derived/clean.rds")
+  step = c("raw", "clean (one row per patient)", "long (one row per patient per assessment)"),
+  rows = c(nrow(raw), nrow(clean), nrow(long)),
+  file = c(
+    file.path("data", "raw", basename(raw_path)), "data/derived/clean.rds",
+    "assessments_long(clean)"
+  )
 )
 saveRDS(lineage, here::here("data", "derived", "lineage.rds"))
 
-message(sprintf("raw %d rows -> clean %d rows", nrow(raw), nrow(clean)))
+message(sprintf(
+  "raw %d rows -> clean %d rows -> long %d rows",
+  nrow(raw), nrow(clean), nrow(long)
+))

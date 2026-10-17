@@ -23,3 +23,14 @@ the pre-specified rule in D-011 it is left out of the adjusted model. All
 other covariate categories in that model have at least 10 patients, so
 D-016 merges nothing. Mallampati class 4 has 1 patient, but Mallampati is
 not in any model.
+
+**2026-10-16** Cleaning function written (`clean_raw()`,
+`assessments_long()` in `R/clean.R`) with known-answer tests on a
+hand-built file of 4 patients. Each test was checked by deliberately
+breaking the code in three ways: swapped treatment labels, sore throat
+defined as `>= 0`, and the whole-number check removed. The tests caught
+all three. The real file passes validation (235 patients; 940 rows in the
+long table). Two choices the codebook does not settle: `patient_id` is the
+raw row number, since the file has no identifier, and age and BMI get
+only wide plausibility bounds (age 0 to 120, BMI 10 to 80), because the
+codebook gives no range for them.
